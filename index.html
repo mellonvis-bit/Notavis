@@ -25,7 +25,7 @@
             --ease:      cubic-bezier(0.4,0,0.2,1);
             --toolbar-h: 58px;
             --wallpaper: none;
-            --wallpaper-overlay: rgba(244,241,236,0.82);
+            --wallpaper-overlay: rgba(244,241,236,0.18);
         }
 
         /* ── DARK MODE ── */
@@ -37,7 +37,7 @@
             --border: #2a2e32;
             --shadow:    0 4px 24px rgba(0,0,0,0.45);
             --shadow-lg: 0 12px 40px rgba(0,0,0,0.62);
-            --wallpaper-overlay: rgba(10,12,13,0.78);
+            --wallpaper-overlay: rgba(10,12,13,0.22);
         }
 
         /* Dark mode - teks dan judul catatan putih bersih */
@@ -1199,12 +1199,12 @@
             color: #f5f5f5;
             text-shadow: 0 1px 8px rgba(0,0,0,0.6);
         }
-        /* Wallpaper overlay lebih tipis agar gambar terlihat jelas */
+        /* Wallpaper overlay sangat tipis agar gambar terlihat sangat jelas */
         body.has-wallpaper:not(.dark-mode) {
-            --wallpaper-overlay: rgba(244,241,236,0.55);
+            --wallpaper-overlay: rgba(244,241,236,0.18);
         }
         body.has-wallpaper.dark-mode {
-            --wallpaper-overlay: rgba(10,12,13,0.55);
+            --wallpaper-overlay: rgba(10,12,13,0.22);
         }
 
         /* ── HAMBURGER MENU BUTTON ── */
@@ -2282,6 +2282,31 @@
             text-transform: uppercase;
             letter-spacing: 0.8px;
             margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .buku-edit-info-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: var(--accent);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: opacity 0.15s, transform 0.15s;
+        }
+        .buku-edit-info-btn:active { opacity: 0.7; transform: scale(0.9); }
+        .buku-edit-info-btn svg {
+            width: 14px; height: 14px;
+            fill: none; stroke: #fff;
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         .buku-bab-list { display: flex; flex-direction: column; gap: 10px; }
@@ -2331,17 +2356,44 @@
             -webkit-box-orient: vertical;
         }
 
-        .buku-bab-del-btn {
-            background: none;
-            border: none;
-            font-size: 1rem;
-            cursor: pointer;
-            padding: 4px 6px;
-            flex-shrink: 0;
-            opacity: 0.5;
+        /* Swipe to delete untuk bab */
+        .buku-bab-card-wrap {
+            position: relative;
+            overflow: hidden;
+            border-radius: 14px;
+        }
+
+        .buku-bab-swipe-bg {
+            position: absolute;
+            inset: 0;
+            background: var(--danger);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 24px;
+            pointer-events: none;
+            opacity: 0;
             transition: opacity 0.15s;
         }
-        .buku-bab-del-btn:active { opacity: 1; }
+
+        .buku-bab-swipe-bg svg {
+            width: 26px;
+            height: 26px;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .buku-bab-card-wrap .buku-bab-card {
+            position: relative;
+            z-index: 2;
+            transition: transform 0.15s ease, box-shadow 0.15s var(--ease);
+            will-change: transform;
+            margin-bottom: 0;
+        }
 
         .buku-empty-bab {
             text-align: center;
@@ -2997,337 +3049,6 @@
         body.dark-mode .welcome-box { background: #161a1d; }
         body.dark-mode .welcome-title { color: #f0f0f0; }
 
-        /* ── BAB SWIPE DELETE ── */
-        .buku-bab-wrap {
-            position: relative;
-            overflow: hidden;
-            border-radius: 14px;
-        }
-
-        .bab-swipe-delete-bg {
-            position: absolute;
-            inset: 0;
-            background: var(--danger);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 20px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.15s;
-        }
-
-        .bab-swipe-delete-bg svg {
-            width: 24px;
-            height: 24px;
-            fill: none;
-            stroke: #fff;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .buku-bab-wrap .buku-bab-card {
-            position: relative;
-            z-index: 2;
-            transition: transform 0.15s ease, box-shadow 0.15s var(--ease);
-            will-change: transform;
-            border-radius: 14px;
-        }
-
-        /* BAB SELECT MODE */
-        .bab-select-bar {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 360;
-            background: var(--paper);
-            color: var(--ink);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            height: 56px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.10);
-            border-bottom: 1px solid var(--border);
-            transform: translateY(-100%);
-            transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
-            user-select: none;
-        }
-        .bab-select-bar.visible { transform: translateY(0); }
-        .bab-select-bar-left {
-            display: flex; align-items: center; gap: 10px;
-            font-size: 0.92rem; font-weight: 700;
-        }
-        .bab-select-bar-count {
-            font-size: 0.88rem; font-weight: 600;
-            background: var(--border); color: var(--ink2);
-            padding: 2px 10px; border-radius: 20px;
-        }
-        .bab-select-bar-actions { display: flex; gap: 10px; align-items: center; }
-        .bab-select-bar-btn {
-            border: none; border-radius: 10px;
-            padding: 7px 16px; font-size: 0.85rem; font-weight: 700;
-            cursor: pointer; transition: opacity 0.15s; user-select: none;
-        }
-        .bab-select-bar-btn:active { opacity: 0.65; }
-        .bab-select-bar-btn.cancel { background: var(--border); color: var(--ink); }
-        .bab-select-bar-btn.select-all { background: var(--border); color: var(--ink); }
-        .bab-select-bar-btn.do-delete { background: var(--ink); color: var(--paper); }
-        .bab-select-bar-btn.do-delete:disabled { opacity: 0.4; cursor: not-allowed; }
-
-        body.bab-select-mode .buku-page-header { padding-top: 70px; }
-        body.bab-select-mode .buku-page-scroll { padding-top: 76px; }
-
-        .buku-bab-card.bab-selectable { cursor: pointer; position: relative; }
-        .buku-bab-card.bab-selected {
-            border-left-color: var(--accent) !important;
-            background: rgba(0,0,0,0.04) !important;
-            box-shadow: 0 0 0 2px rgba(0,0,0,0.12) !important;
-        }
-        body.dark-mode .buku-bab-card.bab-selected {
-            background: rgba(255,255,255,0.06) !important;
-            box-shadow: 0 0 0 2px rgba(255,255,255,0.15) !important;
-        }
-        .buku-bab-card .bab-sel-check {
-            display: none;
-            position: absolute; top: 10px; right: 12px;
-            width: 22px; height: 22px;
-            border-radius: 50%;
-            border: 2px solid var(--border);
-            background: var(--paper);
-            align-items: center; justify-content: center;
-            font-size: 0.75rem; pointer-events: none;
-            flex-shrink: 0;
-            transition: background 0.15s, border-color 0.15s;
-        }
-        .buku-bab-card.bab-selectable .bab-sel-check { display: flex; }
-        .buku-bab-card.bab-selected .bab-sel-check {
-            background: var(--accent); border-color: var(--accent); color: #fff;
-        }
-
-        /* ── NOTIFIKASI MODAL ── */
-        .notif-modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.52);
-            z-index: 400;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s var(--ease);
-            padding-bottom: env(safe-area-inset-bottom, 0);
-        }
-        .notif-modal-overlay.open {
-            opacity: 1;
-            pointer-events: all;
-        }
-        .notif-modal-box {
-            background: var(--paper);
-            width: 100%;
-            max-width: 480px;
-            border-radius: 24px 24px 0 0;
-            padding: 28px 24px 40px;
-            transform: translateY(30px);
-            transition: transform 0.28s var(--ease);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .notif-modal-overlay.open .notif-modal-box { transform: translateY(0); }
-
-        .notif-modal-header {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        .notif-modal-title {
-            font-family: 'Lora', serif;
-            font-size: 1.15rem; font-weight: 700; color: var(--ink);
-        }
-        .notif-modal-close {
-            background: none; border: none;
-            font-size: 1.3rem; color: var(--ink2);
-            cursor: pointer; padding: 2px 6px; line-height: 1;
-        }
-        .notif-modal-close:active { opacity: 0.5; }
-
-        .notif-section-label {
-            font-size: 0.72rem; font-weight: 700;
-            color: var(--ink2); text-transform: uppercase;
-            letter-spacing: 0.8px; margin-bottom: 12px; margin-top: 18px;
-        }
-        .notif-section-label:first-of-type { margin-top: 0; }
-
-        .notif-time-row {
-            display: flex; gap: 12px; align-items: center;
-            margin-bottom: 4px;
-        }
-        .notif-time-group {
-            flex: 1;
-            display: flex; flex-direction: column; gap: 6px;
-        }
-        .notif-time-group label {
-            font-size: 0.75rem; font-weight: 600; color: var(--ink2);
-        }
-        .notif-time-input {
-            width: 100%;
-            padding: 12px 14px;
-            border-radius: 12px;
-            border: 1.5px solid var(--border);
-            background: var(--bg);
-            color: var(--ink);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 1.1rem; font-weight: 700;
-            text-align: center;
-            outline: none;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-        .notif-time-input:focus { border-color: var(--accent); }
-
-        .notif-days-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-            margin-bottom: 4px;
-        }
-        .notif-day-btn {
-            padding: 8px 4px;
-            border-radius: 10px;
-            border: 1.5px solid var(--border);
-            background: transparent;
-            color: var(--ink);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.72rem; font-weight: 700;
-            cursor: pointer;
-            text-align: center;
-            transition: background 0.15s, border-color 0.15s, color 0.15s;
-            user-select: none;
-        }
-        .notif-day-btn.selected {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: #fff;
-        }
-        .notif-day-btn:active { opacity: 0.7; }
-
-        .notif-toggle-row {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 14px 16px;
-            border-radius: 14px;
-            border: 1.5px solid var(--border);
-            background: var(--bg);
-            margin-bottom: 4px;
-        }
-        .notif-toggle-label {
-            font-size: 0.9rem; font-weight: 600; color: var(--ink);
-            display: flex; align-items: center; gap: 8px;
-        }
-        .notif-toggle {
-            position: relative; width: 48px; height: 26px;
-            cursor: pointer; flex-shrink: 0;
-        }
-        .notif-toggle input { opacity: 0; width: 0; height: 0; }
-        .notif-toggle-slider {
-            position: absolute; inset: 0;
-            background: var(--border);
-            border-radius: 26px;
-            transition: background 0.22s;
-        }
-        .notif-toggle-slider::before {
-            content: '';
-            position: absolute;
-            width: 20px; height: 20px;
-            left: 3px; top: 3px;
-            background: #fff;
-            border-radius: 50%;
-            transition: transform 0.22s;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-        }
-        .notif-toggle input:checked + .notif-toggle-slider {
-            background: var(--success);
-        }
-        .notif-toggle input:checked + .notif-toggle-slider::before {
-            transform: translateX(22px);
-        }
-
-        .notif-desc-input {
-            width: 100%;
-            padding: 12px 14px;
-            border-radius: 12px;
-            border: 1.5px solid var(--border);
-            background: var(--bg);
-            color: var(--ink);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.92rem;
-            outline: none;
-            resize: none;
-        }
-        .notif-desc-input:focus { border-color: var(--accent); }
-        .notif-desc-hint {
-            font-size: 0.7rem; color: var(--ink2);
-            text-align: right; margin-top: 4px; opacity: 0.7;
-        }
-        .notif-desc-hint.at-limit { color: var(--danger); opacity: 1; font-weight: 600; }
-
-        .notif-saved-list {
-            display: flex; flex-direction: column; gap: 8px;
-            margin-bottom: 4px;
-        }
-        .notif-saved-item {
-            padding: 12px 14px;
-            border-radius: 12px;
-            border: 1.5px solid var(--border);
-            background: var(--bg);
-            display: flex; align-items: center; gap: 10px;
-        }
-        .notif-saved-info { flex: 1; min-width: 0; }
-        .notif-saved-time {
-            font-size: 0.95rem; font-weight: 700; color: var(--ink);
-            margin-bottom: 2px;
-        }
-        .notif-saved-desc {
-            font-size: 0.78rem; color: var(--ink2);
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .notif-saved-days {
-            font-size: 0.7rem; color: var(--ink2);
-            margin-top: 2px;
-        }
-        .notif-saved-delete {
-            background: none; border: none;
-            color: var(--danger); font-size: 1rem;
-            cursor: pointer; padding: 4px 6px; line-height: 1;
-            flex-shrink: 0;
-        }
-        .notif-saved-delete:active { opacity: 0.6; }
-
-        .notif-empty-msg {
-            text-align: center; padding: 14px 0;
-            font-size: 0.85rem; color: var(--ink2);
-        }
-
-        .notif-save-btn {
-            width: 100%; padding: 14px;
-            background: var(--accent); color: #fff;
-            border: none; border-radius: 14px;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.95rem; font-weight: 700;
-            cursor: pointer; margin-top: 20px;
-            transition: opacity 0.15s;
-        }
-        .notif-save-btn:active { opacity: 0.7; }
-        .notif-save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-        body.dark-mode .notif-modal-box { background: #161a1d; }
-        body.dark-mode .notif-modal-title { color: #f0f0f0; }
-        body.dark-mode .notif-time-input { background: #111416; color: #f0f0f0; border-color: #2a2e32; }
-        body.dark-mode .notif-toggle-row { background: #111416; border-color: #2a2e32; }
-        body.dark-mode .notif-day-btn { color: #e0e0e0; border-color: #2a2e32; }
-        body.dark-mode .notif-desc-input { background: #111416; color: #f0f0f0; border-color: #2a2e32; }
-        body.dark-mode .notif-saved-item { background: #111416; border-color: #2a2e32; }
-
         /* ── WORD LIMIT HINT ── */
         .word-limit-hint {
             font-size: 0.7rem;
@@ -3404,13 +3125,11 @@
                 <!-- Hidden input untuk wallpaper galeri -->
                 <input type="file" id="wallpaperFileInput" accept="image/*" style="display:none">
 
-                <div class="seting-divider"></div>
-
-                <!-- Tombol Notifikasi -->
-                <button class="menu-lock-btn" id="btnNotifikasi" aria-label="Pengingat notifikasi">
-                    <span>🔔</span>
-                    <span>Notifikasi &amp; Pengingat</span>
-                    <span id="notifBadge" class="kunci-status-badge" style="display:none">Aktif</span>
+                <!-- Tombol Kunci Web dipindah ke bawah Wallpaper -->
+                <button class="menu-lock-btn" id="btnKunciWeb">
+                    <span id="kunciWebIcon">🔒</span>
+                    <span id="kunciWebLabel">Kunci Web</span>
+                    <span id="kunciWebStatus" class="kunci-status-badge">Nonaktif</span>
                 </button>
 
                 <div class="seting-divider"></div>
@@ -3431,16 +3150,12 @@
                         <span class="seting-feature-label">Sinkronisasi Cloud</span>
                         <span class="seting-feature-soon">Soon</span>
                     </div>
+                    <div class="seting-feature-row">
+                        <span class="seting-feature-icon">🔔</span>
+                        <span class="seting-feature-label">Notifikasi &amp; Pengingat</span>
+                        <span class="seting-feature-soon">Soon</span>
+                    </div>
                 </div>
-
-                <div class="seting-divider"></div>
-
-                <!-- Tombol Kunci Web -->
-                <button class="menu-lock-btn" id="btnKunciWeb">
-                    <span id="kunciWebIcon">🔒</span>
-                    <span id="kunciWebLabel">Kunci Web</span>
-                    <span id="kunciWebStatus" class="kunci-status-badge">Nonaktif</span>
-                </button>
 
                 <div class="seting-divider"></div>
 
@@ -3779,6 +3494,35 @@
         </div>
     </div>
 
+    <!-- EDIT BUKU MODAL -->
+    <div class="buku-modal-overlay" id="editBukuModal">
+        <div class="buku-modal-box">
+            <div class="buku-modal-handle"></div>
+            <div class="buku-modal-title">✏️ Edit Info Buku</div>
+            <div class="buku-sampul-preview" id="editBukuSampulPreview">
+                <div class="sampul-placeholder" id="editSampulPlaceholder">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h6M3 15h6"/></svg>
+                    <span>Pilih Sampul</span>
+                </div>
+                <img id="editBukuSampulImg" style="display:none" alt="Sampul buku">
+            </div>
+            <input type="file" id="editBukuSampulInput" accept="image/*" style="display:none">
+            <div class="buku-input-group">
+                <div class="buku-input-label">Judul Cerita</div>
+                <input type="text" class="buku-input" id="editBukuJudulInput" placeholder="Masukkan judul (maks. 7 kata)..." maxlength="80" autocomplete="off">
+                <div class="word-limit-hint" id="editBukuJudulHint">0 / 7 kata</div>
+            </div>
+            <div class="buku-input-group">
+                <div class="buku-input-label">Deskripsi Cerita</div>
+                <textarea class="buku-input buku-textarea" id="editBukuDeskripsiInput" placeholder="Tuliskan deskripsi singkat cerita..." maxlength="300"></textarea>
+            </div>
+            <div class="buku-modal-actions">
+                <button class="buku-modal-btn cancel" id="editBukuModalCancel">Batal</button>
+                <button class="buku-modal-btn save" id="editBukuModalSave">Simpan</button>
+            </div>
+        </div>
+    </div>
+
     <!-- KOLEKSI BUKU PAGE -->
     <div class="koleksi-page" id="koleksiPage">
         <div class="koleksi-header">
@@ -3804,7 +3548,12 @@
         </div>
         <div class="buku-page-scroll">
             <div class="buku-page-cover-card" id="bukuPageCoverCard"></div>
-            <div class="buku-bab-section-label" id="bukuBabSectionLabel" style="display:none">Daftar Bab</div>
+            <div class="buku-bab-section-label" id="bukuBabSectionLabel" style="display:none">
+                <span>Daftar Bab</span>
+                <button class="buku-edit-info-btn" id="bukuEditInfoBtn" aria-label="Edit info buku">
+                    <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+            </div>
             <div class="buku-bab-list" id="bukuBabList"></div>
             <div class="buku-empty-bab" id="bukuEmptyBab">&#128214; Belum ada bab.<br>Tap tombol di bawah untuk mulai menulis!</div>
         </div>
@@ -3931,78 +3680,6 @@
                     <button class="ekspor-do-btn" id="eksporDoExport">📥 Ekspor</button>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- BAB SELECT BAR -->
-    <div class="bab-select-bar" id="babSelectBar">
-        <div class="bab-select-bar-left">
-            <span style="font-weight:700; color:var(--ink)">Pilih Bab</span>
-            <span class="bab-select-bar-count" id="babSelectBarCount">0 dipilih</span>
-        </div>
-        <div class="bab-select-bar-actions">
-            <button class="bab-select-bar-btn select-all" id="babSelectAll">Semua</button>
-            <button class="bab-select-bar-btn cancel" id="babSelectCancel">Batal</button>
-            <button class="bab-select-bar-btn do-delete" id="babSelectDelete" disabled>Hapus</button>
-        </div>
-    </div>
-
-    <!-- NOTIFIKASI MODAL -->
-    <div class="notif-modal-overlay" id="notifModalOverlay" role="dialog" aria-modal="true">
-        <div class="notif-modal-box">
-            <div class="notif-modal-header">
-                <div class="notif-modal-title">🔔 Notifikasi &amp; Pengingat</div>
-                <button class="notif-modal-close" id="notifModalClose" aria-label="Tutup">✕</button>
-            </div>
-
-            <!-- Pengingat aktif -->
-            <div class="notif-section-label">Pengingat Tersimpan</div>
-            <div class="notif-saved-list" id="notifSavedList">
-                <div class="notif-empty-msg" id="notifEmptyMsg">Belum ada pengingat.</div>
-            </div>
-
-            <div class="seting-divider" style="margin: 16px 0;"></div>
-
-            <!-- Buat pengingat baru -->
-            <div class="notif-section-label">Buat Pengingat Baru</div>
-
-            <div class="notif-time-row">
-                <div class="notif-time-group">
-                    <label>Jam</label>
-                    <input type="number" class="notif-time-input" id="notifJam" min="0" max="23" value="08" placeholder="08">
-                </div>
-                <div style="font-size:1.6rem; font-weight:700; color:var(--ink); padding-top:20px;">:</div>
-                <div class="notif-time-group">
-                    <label>Menit</label>
-                    <input type="number" class="notif-time-input" id="notifMenit" min="0" max="59" value="00" placeholder="00">
-                </div>
-            </div>
-
-            <div class="notif-section-label" style="margin-top:16px;">Hari</div>
-            <div class="notif-days-grid" id="notifDaysGrid">
-                <button class="notif-day-btn" data-day="0">Min</button>
-                <button class="notif-day-btn" data-day="1">Sen</button>
-                <button class="notif-day-btn" data-day="2">Sel</button>
-                <button class="notif-day-btn" data-day="3">Rab</button>
-                <button class="notif-day-btn" data-day="4">Kam</button>
-                <button class="notif-day-btn" data-day="5">Jum</button>
-                <button class="notif-day-btn" data-day="6">Sab</button>
-            </div>
-
-            <div class="notif-section-label" style="margin-top:16px;">Opsi</div>
-            <div class="notif-toggle-row">
-                <span class="notif-toggle-label">🔁 Ulangi Notifikasi</span>
-                <label class="notif-toggle">
-                    <input type="checkbox" id="notifRepeat">
-                    <span class="notif-toggle-slider"></span>
-                </label>
-            </div>
-
-            <div class="notif-section-label" style="margin-top:16px;">Deskripsi Notifikasi</div>
-            <textarea class="notif-desc-input" id="notifDesc" rows="2" placeholder="Tulis pesan pengingat (maks. 10 kata)..." maxlength="120"></textarea>
-            <div class="notif-desc-hint" id="notifDescHint">0 / 10 kata</div>
-
-            <button class="notif-save-btn" id="notifSaveBtn">💾 Simpan Pengingat</button>
         </div>
     </div>
 
@@ -4454,12 +4131,20 @@
     document.getElementById('cancelDelete').addEventListener('click', closeDeleteModal);
     document.getElementById('confirmDelete').addEventListener('click', () => {
         if (isSelectMode && selectedIds.size > 0) {
-            // Multi-delete
+            // Multi-delete catatan
             const ids = Array.from(selectedIds);
             const tx = db.transaction(['notes'], 'readwrite');
             const store = tx.objectStore('notes');
             ids.forEach(id => store.delete(id));
             tx.oncomplete = () => { exitSelectMode(); displayNotes(); };
+            closeDeleteModal();
+        } else if (_pendingBabDelete) {
+            // Delete bab via swipe
+            const { bab } = _pendingBabDelete;
+            const updated = getBabList(currentBukuId).filter(function(b) { return b.id !== bab.id; });
+            saveBabList(currentBukuId, updated);
+            renderBabList();
+            _pendingBabDelete = null;
             closeDeleteModal();
         } else if (pendingDeleteId !== null) {
             deleteFromDB(pendingDeleteId);
@@ -4479,6 +4164,7 @@
     function closeDeleteModal() {
         deleteModal.classList.remove('open');
         pendingDeleteId = null;
+        _pendingBabDelete = null;
     }
 
     // ─────────────────────────────────────────
@@ -6300,10 +5986,6 @@
         return div.textContent || '';
     }
 
-    // Bab select mode state (dideklarasikan lebih awal agar renderBabList bisa mengakses)
-    let isBabSelectMode = false;
-    let selectedBabIds  = new Set();
-
     function openBukuPage(buku) {
         currentBukuId = buku.id;
         bukuPageTitle.textContent = buku.judul;
@@ -6339,7 +6021,6 @@
     }
 
     function closeBukuPage() {
-        exitBabSelectMode();
         bukuPage.classList.remove('active');
         currentBukuId = null;
     }
@@ -6353,22 +6034,20 @@
             return;
         }
         bukuEmptyBab.style.display = 'none';
-        bukuBabSectionLabel.style.display = 'block';
+        bukuBabSectionLabel.style.display = 'flex';
 
         list.forEach(function(bab, idx) {
-            // Wrap for swipe
+            // Wrap untuk swipe delete
             const wrap = document.createElement('div');
-            wrap.className = 'buku-bab-wrap';
+            wrap.className = 'buku-bab-card-wrap';
 
-            // Swipe bg
+            // Background delete (swipe)
             const swipeBg = document.createElement('div');
-            swipeBg.className = 'bab-swipe-delete-bg';
-            swipeBg.innerHTML = `<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
-            wrap.appendChild(swipeBg);
+            swipeBg.className = 'buku-bab-swipe-bg';
+            swipeBg.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
 
             const card = document.createElement('div');
             card.className = 'buku-bab-card';
-            card.dataset.babId = bab.id;
 
             const num = document.createElement('div');
             num.className = 'buku-bab-card-num';
@@ -6387,72 +6066,98 @@
             body.appendChild(h4);
             body.appendChild(snip);
 
-            const delBtn = document.createElement('button');
-            delBtn.className = 'buku-bab-del-btn';
-            delBtn.innerHTML = '&#128465;';
-            delBtn.setAttribute('aria-label', 'Hapus bab');
-            delBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (isBabSelectMode) return;
-                resumeAudio(); playBtnSound('delete');
-                if (confirm('Hapus bab "' + (bab.judul || 'Tanpa Judul') + '"?')) {
-                    const updated = getBabList(currentBukuId).filter(function(b) { return b.id !== bab.id; });
-                    saveBabList(currentBukuId, updated);
-                    renderBabList();
-                }
-            });
-
-            // Checkbox untuk select mode
-            const selCheck = document.createElement('span');
-            selCheck.className = 'bab-sel-check';
-            selCheck.textContent = '✓';
-
             card.appendChild(num);
             card.appendChild(body);
-            card.appendChild(delBtn);
-            card.appendChild(selCheck);
 
             card.addEventListener('click', function() {
-                if (isBabSelectMode) {
-                    toggleBabSelect(bab.id);
-                    return;
-                }
                 resumeAudio(); playBtnSound('open');
                 openBabEditor(bab);
             });
 
-            // Long press → masuk select mode
-            let babLpTimer = null;
-            let babLpMoved = false;
-            card.addEventListener('touchstart', function(e) {
-                babLpMoved = false;
-                babLpTimer = setTimeout(function() {
-                    if (!babLpMoved) {
-                        resumeAudio(); playBtnSound('tap');
-                        if (!isBabSelectMode) enterBabSelectMode(bab.id);
-                    }
-                }, 600);
-            }, { passive: true });
-            card.addEventListener('touchmove', function() { babLpMoved = true; clearTimeout(babLpTimer); }, { passive: true });
-            card.addEventListener('touchend', function() { clearTimeout(babLpTimer); }, { passive: true });
-            card.addEventListener('touchcancel', function() { clearTimeout(babLpTimer); }, { passive: true });
-
+            wrap.appendChild(swipeBg);
             wrap.appendChild(card);
             bukuBabList.appendChild(wrap);
 
-            // Swipe to delete untuk bab
+            // Pasang swipe-to-delete untuk bab
             attachBabSwipeToDelete(wrap, card, swipeBg, bab);
         });
-
-        // Re-apply select mode jika masih aktif
-        if (isBabSelectMode) {
-            document.querySelectorAll('.buku-bab-card').forEach(c => {
-                c.classList.add('bab-selectable');
-                const cId = parseInt(c.dataset.babId);
-                if (selectedBabIds.has(cId)) c.classList.add('bab-selected');
-            });
-        }
     }
+
+    function attachBabSwipeToDelete(wrap, card, swipeBg, bab) {
+        let startX = 0;
+        let currentX = 0;
+        let dragging = false;
+        let startY = 0;
+        let isHorizontal = null;
+        const THRESHOLD = 90;
+
+        function onTouchStart(e) {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            currentX = 0;
+            dragging = true;
+            isHorizontal = null;
+            card.style.transition = 'none';
+        }
+
+        function onTouchMove(e) {
+            if (!dragging) return;
+            const dx = e.touches[0].clientX - startX;
+            const dy = e.touches[0].clientY - startY;
+
+            if (isHorizontal === null) {
+                if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
+                    isHorizontal = Math.abs(dx) > Math.abs(dy);
+                }
+            }
+
+            if (!isHorizontal) return;
+            if (dx < 0) return; // only right swipe
+
+            e.preventDefault();
+            currentX = dx;
+            const progress = Math.min(currentX / THRESHOLD, 1);
+            card.style.transform = 'translateX(' + currentX + 'px)';
+            swipeBg.style.opacity = String(progress);
+        }
+
+        function onTouchEnd() {
+            if (!dragging) return;
+            dragging = false;
+            card.style.transition = 'transform 0.22s ease';
+
+            if (currentX >= THRESHOLD && isHorizontal) {
+                card.style.transform = 'translateX(100%)';
+                swipeBg.style.opacity = '1';
+                setTimeout(() => {
+                    resumeAudio(); playBtnSound('delete');
+                    // Tampilkan popup delete yang sama seperti catatan
+                    const delModal = document.getElementById('deleteModal');
+                    document.getElementById('deleteModalDesc').innerText =
+                        '"' + (bab.judul || 'Tanpa Judul') + '" akan dihapus secara permanen dan tidak dapat dikembalikan.';
+                    // Simpan context bab yang akan dihapus
+                    _pendingBabDelete = { bab: bab, wrap: wrap, card: card, swipeBg: swipeBg };
+                    pendingDeleteId = null;
+                    delModal.classList.add('open');
+                    card.style.transition = 'none';
+                    card.style.transform = '';
+                    swipeBg.style.opacity = '0';
+                }, 80);
+            } else {
+                card.style.transform = '';
+                swipeBg.style.opacity = '0';
+            }
+            currentX = 0;
+            isHorizontal = null;
+        }
+
+        card.addEventListener('touchstart', onTouchStart, { passive: true });
+        card.addEventListener('touchmove', onTouchMove, { passive: false });
+        card.addEventListener('touchend', onTouchEnd, { passive: true });
+        card.addEventListener('touchcancel', onTouchEnd, { passive: true });
+    }
+
+    let _pendingBabDelete = null;
 
     // closeBabFontPanels - dipanggil oleh closeBabEditor dan toolbar
     function closeBabFontPanels() {
@@ -6552,6 +6257,105 @@
             history.back();
         }
     });
+
+    // ── EDIT BUKU INFO ──
+    (function initEditBukuModal() {
+        const editBukuModal       = document.getElementById('editBukuModal');
+        const editBukuModalCancel = document.getElementById('editBukuModalCancel');
+        const editBukuModalSave   = document.getElementById('editBukuModalSave');
+        const editBukuSampulPreview = document.getElementById('editBukuSampulPreview');
+        const editBukuSampulInput = document.getElementById('editBukuSampulInput');
+        const editBukuSampulImg   = document.getElementById('editBukuSampulImg');
+        const editSampulPlaceholder = document.getElementById('editSampulPlaceholder');
+        const editBukuJudulInput  = document.getElementById('editBukuJudulInput');
+        const editBukuJudulHint   = document.getElementById('editBukuJudulHint');
+        const editBukuDeskripsiInput = document.getElementById('editBukuDeskripsiInput');
+        let editBukuSampulData = null;
+
+        editBukuJudulInput.addEventListener('input', () => enforceWordLimit(editBukuJudulInput, editBukuJudulHint));
+
+        editBukuSampulPreview.addEventListener('click', () => {
+            editBukuSampulInput.value = '';
+            editBukuSampulInput.click();
+        });
+
+        editBukuSampulInput.addEventListener('change', () => {
+            const file = editBukuSampulInput.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) { alert('File harus berupa gambar!'); return; }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                editBukuSampulData = e.target.result;
+                editBukuSampulImg.src = editBukuSampulData;
+                editBukuSampulImg.style.display = 'block';
+                editSampulPlaceholder.style.display = 'none';
+                editBukuSampulPreview.classList.add('has-img');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function openEditBukuModal() {
+            if (!currentBukuId) return;
+            const list = getBukuList();
+            const buku = list.find(b => b.id === currentBukuId);
+            if (!buku) return;
+            resumeAudio(); playBtnSound('tap');
+            editBukuJudulInput.value = buku.judul || '';
+            editBukuDeskripsiInput.value = buku.deskripsi || '';
+            editBukuSampulData = buku.sampul || null;
+            if (editBukuSampulData) {
+                editBukuSampulImg.src = editBukuSampulData;
+                editBukuSampulImg.style.display = 'block';
+                editSampulPlaceholder.style.display = 'none';
+                editBukuSampulPreview.classList.add('has-img');
+            } else {
+                editBukuSampulImg.src = '';
+                editBukuSampulImg.style.display = 'none';
+                editSampulPlaceholder.style.display = 'flex';
+                editBukuSampulPreview.classList.remove('has-img');
+            }
+            enforceWordLimit(editBukuJudulInput, editBukuJudulHint);
+            editBukuModal.classList.add('open');
+        }
+
+        function closeEditBukuModal() {
+            editBukuModal.classList.remove('open');
+        }
+
+        document.getElementById('bukuEditInfoBtn').addEventListener('click', openEditBukuModal);
+
+        editBukuModalCancel.addEventListener('click', () => {
+            resumeAudio(); playBtnSound('tap');
+            closeEditBukuModal();
+        });
+
+        editBukuModal.addEventListener('click', (e) => {
+            if (e.target === editBukuModal) closeEditBukuModal();
+        });
+
+        editBukuModalSave.addEventListener('click', () => {
+            enforceWordLimit(editBukuJudulInput, editBukuJudulHint);
+            const judul = editBukuJudulInput.value.trim();
+            if (!judul) { editBukuJudulInput.focus(); return; }
+            resumeAudio(); playBtnSound('save');
+
+            const list = getBukuList();
+            const idx = list.findIndex(b => b.id === currentBukuId);
+            if (idx < 0) { closeEditBukuModal(); return; }
+
+            list[idx].judul = judul;
+            list[idx].deskripsi = editBukuDeskripsiInput.value.trim();
+            if (editBukuSampulData !== null) {
+                list[idx].sampul = editBukuSampulData || null;
+            }
+            saveBukuList(list);
+
+            // Update UI buku page
+            bukuPageTitle.textContent = judul;
+            openBukuPage(list[idx]);
+            closeEditBukuModal();
+        });
+    })();
 
     // ─────────────────────────────────────────
     // NEW-F. BAB EDITOR TOOLBAR
@@ -7079,403 +6883,6 @@
             }, 800);
         }
     });
-    // ─────────────────────────────────────────
-    // NEW-G. BAB SWIPE TO DELETE
-    // ─────────────────────────────────────────
-    function attachBabSwipeToDelete(wrap, card, swipeBg, bab) {
-        let startX = 0, currentX = 0, dragging = false, startY = 0, isHorizontal = null;
-        const THRESHOLD = 80;
-
-        function onTouchStart(e) {
-            if (isBabSelectMode) return;
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            currentX = 0; dragging = true; isHorizontal = null;
-            card.style.transition = 'none';
-        }
-        function onTouchMove(e) {
-            if (!dragging) return;
-            const dx = e.touches[0].clientX - startX;
-            const dy = e.touches[0].clientY - startY;
-            if (isHorizontal === null) {
-                if (Math.abs(dx) > 6 || Math.abs(dy) > 6)
-                    isHorizontal = Math.abs(dx) > Math.abs(dy);
-            }
-            if (!isHorizontal) return;
-            if (dx < 0) return;
-            e.preventDefault();
-            currentX = dx;
-            const progress = Math.min(currentX / THRESHOLD, 1);
-            card.style.transform = 'translateX(' + currentX + 'px)';
-            swipeBg.style.opacity = String(progress);
-        }
-        function onTouchEnd() {
-            if (!dragging) return;
-            dragging = false;
-            card.style.transition = 'transform 0.22s ease';
-            if (currentX >= THRESHOLD && isHorizontal) {
-                card.style.transform = 'translateX(100%)';
-                swipeBg.style.opacity = '1';
-                setTimeout(() => {
-                    resumeAudio(); playBtnSound('delete');
-                    if (confirm('Hapus bab "' + (bab.judul || 'Tanpa Judul') + '"?')) {
-                        const updated = getBabList(currentBukuId).filter(b => b.id !== bab.id);
-                        saveBabList(currentBukuId, updated);
-                        renderBabList();
-                    } else {
-                        card.style.transition = 'transform 0.22s ease';
-                        card.style.transform = '';
-                        swipeBg.style.opacity = '0';
-                    }
-                }, 80);
-            } else {
-                card.style.transform = '';
-                swipeBg.style.opacity = '0';
-            }
-            currentX = 0; isHorizontal = null;
-        }
-        card.addEventListener('touchstart', onTouchStart, { passive: true });
-        card.addEventListener('touchmove', onTouchMove, { passive: false });
-        card.addEventListener('touchend', onTouchEnd, { passive: true });
-        card.addEventListener('touchcancel', onTouchEnd, { passive: true });
-    }
-
-    // ─────────────────────────────────────────
-    // NEW-H. BAB SELECT MODE
-    // ─────────────────────────────────────────
-    const babSelectBar   = document.getElementById('babSelectBar');
-    const babSelectCount = document.getElementById('babSelectBarCount');
-    const babSelectAll   = document.getElementById('babSelectAll');
-    const babSelectCancel= document.getElementById('babSelectCancel');
-    const babSelectDelete= document.getElementById('babSelectDelete');
-
-    function enterBabSelectMode(firstId) {
-        isBabSelectMode = true;
-        selectedBabIds = new Set();
-        document.body.classList.add('bab-select-mode');
-        babSelectBar.classList.add('visible');
-        document.querySelectorAll('.buku-bab-card').forEach(c => {
-            c.classList.add('bab-selectable');
-        });
-        if (firstId != null) toggleBabSelect(firstId);
-        updateBabSelectUI();
-    }
-
-    function exitBabSelectMode() {
-        isBabSelectMode = false;
-        selectedBabIds = new Set();
-        document.body.classList.remove('bab-select-mode');
-        babSelectBar.classList.remove('visible');
-        document.querySelectorAll('.buku-bab-card').forEach(c => {
-            c.classList.remove('bab-selectable', 'bab-selected');
-        });
-    }
-
-    function toggleBabSelect(id) {
-        const nid = parseInt(id);
-        if (selectedBabIds.has(nid)) selectedBabIds.delete(nid);
-        else selectedBabIds.add(nid);
-        document.querySelectorAll('.buku-bab-card').forEach(c => {
-            const cid = parseInt(c.dataset.babId);
-            c.classList.toggle('bab-selected', selectedBabIds.has(cid));
-        });
-        updateBabSelectUI();
-    }
-
-    function updateBabSelectUI() {
-        const n = selectedBabIds.size;
-        babSelectCount.textContent = n + ' dipilih';
-        babSelectDelete.disabled = n === 0;
-    }
-
-    babSelectCancel.addEventListener('click', () => {
-        resumeAudio(); playBtnSound('tap');
-        exitBabSelectMode();
-    });
-
-    babSelectAll.addEventListener('click', () => {
-        resumeAudio(); playBtnSound('tap');
-        const list = getBabList(currentBukuId);
-        list.forEach(b => selectedBabIds.add(b.id));
-        document.querySelectorAll('.buku-bab-card').forEach(c => c.classList.add('bab-selected'));
-        updateBabSelectUI();
-    });
-
-    babSelectDelete.addEventListener('click', () => {
-        if (selectedBabIds.size === 0) return;
-        resumeAudio(); playBtnSound('delete');
-        const n = selectedBabIds.size;
-        if (confirm('Hapus ' + n + ' bab? Tindakan ini tidak dapat dibatalkan.')) {
-            const updated = getBabList(currentBukuId).filter(b => !selectedBabIds.has(b.id));
-            saveBabList(currentBukuId, updated);
-            exitBabSelectMode();
-            renderBabList();
-        }
-    });
-
-    // ─────────────────────────────────────────
-    // NEW-I. NOTIFIKASI & PENGINGAT
-    // ─────────────────────────────────────────
-    (function initNotifikasi() {
-        const overlay    = document.getElementById('notifModalOverlay');
-        const closeBtn   = document.getElementById('notifModalClose');
-        const saveBtn    = document.getElementById('notifSaveBtn');
-        const jamInput   = document.getElementById('notifJam');
-        const menitInput = document.getElementById('notifMenit');
-        const descInput  = document.getElementById('notifDesc');
-        const descHint   = document.getElementById('notifDescHint');
-        const repeatChk  = document.getElementById('notifRepeat');
-        const savedList  = document.getElementById('notifSavedList');
-        const emptyMsg   = document.getElementById('notifEmptyMsg');
-        const badge      = document.getElementById('notifBadge');
-        const dayBtns    = document.querySelectorAll('.notif-day-btn');
-
-        let selectedDays = new Set();
-
-        // Day toggle
-        dayBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const d = parseInt(btn.dataset.day);
-                if (selectedDays.has(d)) { selectedDays.delete(d); btn.classList.remove('selected'); }
-                else { selectedDays.add(d); btn.classList.add('selected'); }
-            });
-        });
-
-        // Desc word limit (10 kata)
-        descInput.addEventListener('input', () => {
-            const words = descInput.value.trim() ? descInput.value.trim().split(/\s+/).filter(Boolean) : [];
-            if (words.length > 10) {
-                descInput.value = words.slice(0, 10).join(' ');
-            }
-            const cur = descInput.value.trim() ? descInput.value.trim().split(/\s+/).filter(Boolean).length : 0;
-            descHint.textContent = cur + ' / 10 kata';
-            descHint.classList.toggle('at-limit', cur >= 10);
-        });
-
-        // Load saved reminders
-        function loadReminders() {
-            return JSON.parse(localStorage.getItem('nota_reminders') || '[]');
-        }
-        function saveReminders(list) {
-            localStorage.setItem('nota_reminders', JSON.stringify(list));
-            updateBadge();
-        }
-        function updateBadge() {
-            const list = loadReminders();
-            badge.style.display = list.length > 0 ? 'inline-block' : 'none';
-            badge.classList.toggle('aktif', list.length > 0);
-            badge.textContent = list.length > 0 ? list.length + ' Aktif' : 'Aktif';
-        }
-
-        function renderSavedList() {
-            const list = loadReminders();
-            savedList.innerHTML = '';
-            if (list.length === 0) {
-                savedList.appendChild(emptyMsg);
-                return;
-            }
-            const DAY_NAMES = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
-            list.forEach((r, idx) => {
-                const item = document.createElement('div');
-                item.className = 'notif-saved-item';
-
-                const info = document.createElement('div');
-                info.className = 'notif-saved-info';
-
-                const timeEl = document.createElement('div');
-                timeEl.className = 'notif-saved-time';
-                const jamStr  = String(r.jam).padStart(2,'0');
-                const menitStr = String(r.menit).padStart(2,'0');
-                timeEl.textContent = jamStr + ':' + menitStr + (r.repeat ? ' 🔁' : '');
-
-                const descEl = document.createElement('div');
-                descEl.className = 'notif-saved-desc';
-                descEl.textContent = r.desc || '(Tanpa deskripsi)';
-
-                const daysEl = document.createElement('div');
-                daysEl.className = 'notif-saved-days';
-                if (r.days && r.days.length > 0) {
-                    daysEl.textContent = r.days.map(d => DAY_NAMES[d]).join(', ');
-                } else {
-                    daysEl.textContent = 'Semua hari';
-                }
-
-                info.appendChild(timeEl);
-                info.appendChild(descEl);
-                info.appendChild(daysEl);
-
-                const delBtn = document.createElement('button');
-                delBtn.className = 'notif-saved-delete';
-                delBtn.innerHTML = '🗑️';
-                delBtn.setAttribute('aria-label', 'Hapus pengingat');
-                delBtn.addEventListener('click', () => {
-                    resumeAudio(); playBtnSound('delete');
-                    cancelReminderAlarm(r);
-                    const updated = loadReminders().filter((_,i) => i !== idx);
-                    saveReminders(updated);
-                    renderSavedList();
-                });
-
-                item.appendChild(info);
-                item.appendChild(delBtn);
-                savedList.appendChild(item);
-            });
-        }
-
-        function openNotifModal() {
-            // Reset form
-            jamInput.value = '08';
-            menitInput.value = '00';
-            descInput.value = '';
-            descHint.textContent = '0 / 10 kata';
-            descHint.classList.remove('at-limit');
-            repeatChk.checked = false;
-            selectedDays = new Set();
-            dayBtns.forEach(b => b.classList.remove('selected'));
-            renderSavedList();
-            overlay.classList.add('open');
-        }
-
-        function closeNotifModal() {
-            overlay.classList.remove('open');
-        }
-
-        closeBtn.addEventListener('click', () => { resumeAudio(); playBtnSound('tap'); closeNotifModal(); });
-        overlay.addEventListener('click', e => { if (e.target === overlay) closeNotifModal(); });
-
-        // Simpan pengingat
-        saveBtn.addEventListener('click', async () => {
-            resumeAudio(); playBtnSound('save');
-
-            // Minta izin notifikasi
-            if (!('Notification' in window)) {
-                alert('Browser ini tidak mendukung notifikasi.');
-                return;
-            }
-
-            let perm = Notification.permission;
-            if (perm === 'denied') {
-                alert('Izin notifikasi ditolak. Aktifkan notifikasi di pengaturan browser/perangkat Anda.');
-                return;
-            }
-            if (perm !== 'granted') {
-                perm = await Notification.requestPermission();
-            }
-            if (perm !== 'granted') {
-                alert('Izin notifikasi tidak diberikan.');
-                return;
-            }
-
-            const jam = parseInt(jamInput.value);
-            const menit = parseInt(menitInput.value);
-            if (isNaN(jam) || jam < 0 || jam > 23 || isNaN(menit) || menit < 0 || menit > 59) {
-                alert('Masukkan jam (0-23) dan menit (0-59) yang valid.');
-                return;
-            }
-
-            const desc = descInput.value.trim() || 'Waktunya menulis di Notavis!';
-            const repeat = repeatChk.checked;
-            const days = [...selectedDays].sort();
-
-            const reminder = {
-                id: Date.now(),
-                jam, menit, desc, repeat, days
-            };
-
-            const list = loadReminders();
-            list.push(reminder);
-            saveReminders(list);
-
-            scheduleReminderAlarm(reminder);
-            renderSavedList();
-
-            // Reset form
-            jamInput.value = '08';
-            menitInput.value = '00';
-            descInput.value = '';
-            descHint.textContent = '0 / 10 kata';
-            descHint.classList.remove('at-limit');
-            repeatChk.checked = false;
-            selectedDays = new Set();
-            dayBtns.forEach(b => b.classList.remove('selected'));
-
-            // Tampilkan konfirmasi kecil
-            const jamStr = String(jam).padStart(2,'0');
-            const menitStr = String(menit).padStart(2,'0');
-            alert('✅ Pengingat disimpan!\nNotifikasi akan muncul setiap ' + jamStr + ':' + menitStr + (repeat ? ' (berulang)' : '') + '.');
-        });
-
-        // ── Scheduler alarm berbasis setTimeout / interval ──
-        const activeTimers = {}; // id → timerId
-
-        function scheduleReminderAlarm(r) {
-            cancelReminderAlarm(r);
-            const now = new Date();
-            const target = new Date();
-            target.setHours(r.jam, r.menit, 0, 0);
-
-            let msUntil = target - now;
-            if (msUntil <= 0) msUntil += 24 * 60 * 60 * 1000;
-
-            // Jika ada filter hari, cek apakah hari ini termasuk
-            function shouldFireToday() {
-                if (!r.days || r.days.length === 0) return true;
-                return r.days.includes(new Date().getDay());
-            }
-
-            function fire() {
-                if (shouldFireToday()) {
-                    if (Notification.permission === 'granted') {
-                        new Notification('🔔 Notavis – Pengingat', {
-                            body: r.desc || 'Waktunya menulis!',
-                            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📝</text></svg>'
-                        });
-                    }
-                }
-                if (r.repeat) {
-                    activeTimers[r.id] = setTimeout(() => {
-                        const nextMs = 24 * 60 * 60 * 1000;
-                        activeTimers[r.id] = setTimeout(fire, nextMs - 1000);
-                    }, 1000);
-                }
-            }
-
-            activeTimers[r.id] = setTimeout(() => {
-                fire();
-                if (r.repeat) {
-                    // Jadwalkan ulang setiap 24 jam
-                    const interval = setInterval(() => {
-                        if (!loadReminders().find(x => x.id === r.id)) { clearInterval(interval); return; }
-                        fire();
-                    }, 24 * 60 * 60 * 1000);
-                    activeTimers[r.id + '_interval'] = interval;
-                }
-            }, msUntil);
-        }
-
-        function cancelReminderAlarm(r) {
-            if (activeTimers[r.id]) { clearTimeout(activeTimers[r.id]); delete activeTimers[r.id]; }
-            if (activeTimers[r.id + '_interval']) { clearInterval(activeTimers[r.id + '_interval']); delete activeTimers[r.id + '_interval']; }
-        }
-
-        // Re-schedule semua saat halaman dimuat
-        function reScheduleAll() {
-            loadReminders().forEach(r => scheduleReminderAlarm(r));
-        }
-
-        // Hubungkan tombol di menu
-        document.getElementById('btnNotifikasi').addEventListener('click', () => {
-            resumeAudio(); playBtnSound('tap');
-            closeMenuDrawer();
-            setTimeout(openNotifModal, 200);
-        });
-
-        // Init
-        updateBadge();
-        reScheduleAll();
-
-    })();
-
     </script>
 </body>
 </html>
