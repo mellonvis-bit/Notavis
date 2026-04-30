@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Notavis v1.2.0</title>
+    <title>Notavis v1.4.5</title>
     <style>
         /* ── FONT ── */
         @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Source+Code+Pro:wght@400;600&family=Nunito:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Poppins:wght@400;500;600;700&family=Dancing+Script:wght@400;600;700&family=Raleway:ital,wght@0,400;0,600;0,700;1,400&family=Josefin+Sans:ital,wght@0,400;0,600;1,400&family=Ubuntu:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&family=Roboto+Slab:wght@400;600;700&family=Ubuntu+Mono:wght@400;700&display=swap');
@@ -2046,7 +2046,7 @@
         .koleksi-buku-card .buku-del-btn {
             position: absolute;
             top: 8px;
-            right: 8px;
+            right: 44px;
             width: 28px;
             height: 28px;
             border-radius: 50%;
@@ -2060,8 +2060,18 @@
             cursor: pointer;
             z-index: 5;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            transition: background 0.15s, transform 0.15s;
         }
-
+        .koleksi-buku-card .buku-del-btn svg {
+            width: 13px; height: 13px;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
         .koleksi-buku-card.show-del .buku-del-btn {
             display: flex;
         }
@@ -3049,6 +3059,396 @@
         body.dark-mode .welcome-box { background: #161a1d; }
         body.dark-mode .welcome-title { color: #f0f0f0; }
 
+        /* ── STATISTIK BUTTON (FAB pojok kiri bawah) ── */
+        .fab-statistik {
+            position: fixed;
+            bottom: 36px;
+            left: 28px;
+            width: 56px;
+            height: 56px;
+            background: var(--paper);
+            color: var(--ink);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.14);
+            z-index: 120;
+            border: 1.5px solid var(--border);
+            user-select: none;
+            -webkit-user-select: none;
+            will-change: transform;
+            transition: transform 0.18s var(--ease), background 0.2s, border-color 0.2s;
+        }
+        .fab-statistik:active { transform: scale(0.88); }
+        .fab-statistik svg {
+            width: 22px; height: 22px;
+            stroke: var(--ink); fill: none;
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+            transition: stroke 0.2s;
+        }
+        body.dark-mode .fab-statistik { background: #161a1d; border-color: #2a2e32; }
+        body.dark-mode .fab-statistik svg { stroke: #f0f0f0; }
+        @media (max-width: 600px) {
+            .fab-statistik { bottom: 22px; left: 20px; }
+        }
+
+        /* ── STATISTIK MODAL ── */
+        .statistik-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.48);
+            z-index: 360;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.22s var(--ease);
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+        .statistik-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .statistik-box {
+            background: var(--paper);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 24px 24px 0 0;
+            padding: 28px 24px 40px;
+            transform: translateY(30px);
+            transition: transform 0.25s var(--ease);
+            max-height: 88vh;
+            overflow-y: auto;
+        }
+        .statistik-overlay.open .statistik-box { transform: translateY(0); }
+
+        .statistik-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .statistik-title {
+            font-family: 'Lora', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .statistik-close-btn {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            color: var(--ink2);
+            cursor: pointer;
+            padding: 2px 6px;
+            line-height: 1;
+        }
+        .statistik-close-btn:active { opacity: 0.5; }
+
+        .statistik-item-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--ink2);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 10px;
+            margin-top: 4px;
+        }
+
+        .statistik-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .statistik-cards.three { grid-template-columns: 1fr 1fr 1fr; }
+
+        .statistik-card {
+            background: var(--bg);
+            border-radius: 14px;
+            padding: 16px 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            border: 1.5px solid var(--border);
+        }
+
+        .statistik-card-icon {
+            font-size: 1.4rem;
+            margin-bottom: 2px;
+            line-height: 1;
+        }
+
+        .statistik-card-value {
+            font-family: 'Lora', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1.1;
+        }
+
+        .statistik-card-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--ink2);
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .statistik-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 12px 0;
+        }
+
+        .statistik-read-row {
+            background: var(--bg);
+            border-radius: 14px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1.5px solid var(--border);
+            margin-bottom: 12px;
+        }
+        .statistik-read-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .statistik-read-icon { font-size: 1.3rem; }
+        .statistik-read-label {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--ink);
+        }
+        .statistik-read-val {
+            font-family: 'Lora', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        body.dark-mode .statistik-box { background: #161a1d; }
+        body.dark-mode .statistik-card { background: #1a1e22; }
+        body.dark-mode .statistik-read-row { background: #1a1e22; }
+        body.dark-mode .statistik-card-value { color: #f0f0f0; }
+
+        /* ── STATISTIK GRAFIK ── */
+        .statistik-chart-wrap {
+            margin: 4px 0 16px;
+            background: var(--bg);
+            border-radius: 14px;
+            border: 1.5px solid var(--border);
+            padding: 16px 16px 10px;
+        }
+        .statistik-chart-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--ink2);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 12px;
+        }
+        .statistik-bar-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 80px;
+        }
+        .statistik-bar-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            height: 100%;
+            justify-content: flex-end;
+        }
+        .statistik-bar {
+            width: 100%;
+            border-radius: 6px 6px 0 0;
+            background: linear-gradient(180deg, #3b82f6, #1d4ed8);
+            transition: height 0.5s cubic-bezier(0.4,0,0.2,1);
+            min-height: 4px;
+            position: relative;
+        }
+        .statistik-bar.accent-bar {
+            background: linear-gradient(180deg, #60a5fa, #2563eb);
+            box-shadow: 0 2px 8px rgba(37,99,235,0.35);
+        }
+        .statistik-bar-label {
+            font-size: 0.62rem;
+            font-weight: 600;
+            color: var(--ink2);
+            text-align: center;
+            white-space: nowrap;
+        }
+        .statistik-bar-val {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #2563eb;
+            text-align: center;
+        }
+        body.dark-mode .statistik-chart-wrap { background: #1a1e22; }
+        body.dark-mode .statistik-bar { background: linear-gradient(180deg, #60a5fa, #3b82f6); }
+        body.dark-mode .statistik-bar.accent-bar { background: linear-gradient(180deg, #93c5fd, #60a5fa); }
+        body.dark-mode .statistik-bar-val { color: #93c5fd; }
+        body.dark-mode .statistik-title { color: #f0f0f0; }
+
+        /* ── PIN / FAVORIT note card ── */
+        .note-card.pinned {
+            border-left-color: #e67e22;
+        }
+
+        /* Tombol bintang pin lama (disembunyikan — digantikan popup) */
+        .pin-star-btn {
+            display: none !important;
+        }
+        /* ── NOTE ACTION POPUP (long press) ── */
+        .note-action-popup {
+            position: fixed;
+            z-index: 500;
+            background: var(--paper);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+            padding: 8px;
+            display: flex;
+            gap: 6px;
+            opacity: 0;
+            transform: scale(0.88) translateY(8px);
+            pointer-events: none;
+            transition: opacity 0.18s var(--ease), transform 0.18s var(--ease);
+            border: 1.5px solid var(--border);
+        }
+        .note-action-popup.open {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: all;
+        }
+        .note-action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 18px;
+            border-radius: 12px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transition: background 0.15s;
+            user-select: none;
+            -webkit-user-select: none;
+            min-width: 68px;
+        }
+        .note-action-btn:active { background: var(--border); }
+        .note-action-btn svg {
+            width: 22px; height: 22px;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .note-action-btn.delete-action svg { stroke: var(--danger); }
+        .note-action-btn.pin-action svg { stroke: #e67e22; }
+        .note-action-btn.pin-action.pinned svg { fill: #e67e22; stroke: #e67e22; }
+        .note-action-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--ink2);
+            white-space: nowrap;
+        }
+        .note-action-btn.delete-action .note-action-label { color: var(--danger); }
+        .note-action-btn.pin-action .note-action-label { color: #e67e22; }
+        .note-action-divider {
+            width: 1px;
+            background: var(--border);
+            margin: 6px 0;
+            flex-shrink: 0;
+        }
+        body.dark-mode .note-action-popup { background: #1e2428; border-color: #2a2e32; }
+
+        /* Saat sudah dipin: badge selalu tampil */
+        .note-card.pinned .pin-star-btn { display: none; }
+        body.dark-mode .note-card.pinned .pin-star-btn { display: none; }
+
+        /* Badge kecil "Dipin" */
+        .pin-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #e67e22;
+            background: rgba(230,126,34,0.1);
+            padding: 2px 7px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+        body.dark-mode .pin-badge { background: rgba(230,126,34,0.18); }
+
+        /* ── PIN BUKU pada koleksi ── */
+        /* Tombol bintang pin pada buku */
+        .buku-pin-star-btn {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(0,0,0,0.38);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 6;
+            transition: background 0.18s, transform 0.15s;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        .buku-pin-star-btn:active { transform: scale(0.82); }
+        .buku-pin-star-btn svg {
+            width: 14px; height: 14px;
+            fill: none;
+            stroke: rgba(255,255,255,0.85);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: fill 0.18s, stroke 0.18s, transform 0.18s;
+        }
+        /* Muncul saat long press (show-del aktif) */
+        .koleksi-buku-card.show-del .buku-pin-star-btn {
+            display: flex;
+        }
+        /* Saat sudah dipin: selalu tampil & bintang terisi */
+        .koleksi-buku-card.pinned .buku-pin-star-btn {
+            display: flex;
+            background: rgba(230,126,34,0.88);
+        }
+        .koleksi-buku-card.pinned .buku-pin-star-btn svg {
+            fill: #fff;
+            stroke: #fff;
+        }
+        /* Border oranye pada cover buku yang dipin */
+        .koleksi-buku-card.pinned .koleksi-buku-cover::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            border: 2.5px solid #e67e22;
+            pointer-events: none;
+        }
+
         /* ── WORD LIMIT HINT ── */
         .word-limit-hint {
             font-size: 0.7rem;
@@ -3059,6 +3459,144 @@
             transition: color 0.2s;
         }
         .word-limit-hint.at-limit { color: var(--danger); opacity: 1; font-weight: 600; }
+
+        /* ── TEMPLATE PICKER OVERLAY ── */
+        .template-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.52);
+            z-index: 360;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.22s var(--ease);
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+        .template-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .template-box {
+            background: var(--paper);
+            width: 100%;
+            max-width: 520px;
+            border-radius: 24px 24px 0 0;
+            padding: 24px 20px 36px;
+            transform: translateY(30px);
+            transition: transform 0.28s var(--ease);
+            max-height: 88vh;
+            overflow-y: auto;
+        }
+        .template-overlay.open .template-box { transform: translateY(0); }
+        .template-handle {
+            width: 38px; height: 4px;
+            border-radius: 2px;
+            background: var(--border);
+            margin: 0 auto 18px;
+        }
+        .template-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .template-title {
+            font-family: 'Lora', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--ink);
+        }
+        .template-close-btn {
+            background: none; border: none;
+            font-size: 1.2rem; color: var(--ink2);
+            cursor: pointer; padding: 4px 8px; line-height: 1;
+        }
+        .template-close-btn:active { opacity: 0.5; }
+        .template-subtitle {
+            font-size: 0.82rem;
+            color: var(--ink2);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        .template-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .template-card {
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: border-color 0.18s, background 0.18s, transform 0.15s;
+            background: var(--bg);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .template-card:active { transform: scale(0.97); }
+        .template-card:hover { border-color: var(--accent); background: var(--paper); }
+        .template-card-icon {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        .template-card-icon.blog    { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+        .template-card-icon.harian  { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+        .template-card-icon.todo    { background: linear-gradient(135deg, #10b981, #059669); }
+        .template-card-body { flex: 1; min-width: 0; }
+        .template-card-name {
+            font-family: 'Lora', serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 3px;
+        }
+        .template-card-desc {
+            font-size: 0.8rem;
+            color: var(--ink2);
+            line-height: 1.35;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .template-card-arrow {
+            font-size: 1rem;
+            color: var(--ink2);
+            flex-shrink: 0;
+        }
+        .template-blank-btn {
+            width: 100%;
+            margin-top: 8px;
+            padding: 12px;
+            border-radius: 14px;
+            border: 1.5px dashed var(--border);
+            background: transparent;
+            color: var(--ink2);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .template-blank-btn:active { opacity: 0.7; }
+        .template-blank-btn:hover { border-color: var(--accent); background: var(--paper); color: var(--ink); }
+        body.dark-mode .template-box { background: #161a1d; }
+        body.dark-mode .template-card { background: #111416; border-color: #2a2e32; }
+        body.dark-mode .template-card:hover { background: #1a1e22; }
     </style>
 </head>
 <body>
@@ -3252,6 +3790,100 @@
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
         </svg>
     </button>
+
+    <!-- FAB STATISTIK (pojok kiri bawah) -->
+    <button class="fab-statistik" id="fabStatistik" aria-label="Statistik Literasi" title="Statistik">
+        <svg viewBox="0 0 24 24">
+            <line x1="18" y1="20" x2="18" y2="10"/>
+            <line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/>
+            <line x1="2" y1="20" x2="22" y2="20"/>
+        </svg>
+    </button>
+
+    <!-- STATISTIK MODAL -->
+    <div class="statistik-overlay" id="statistikOverlay" role="dialog" aria-modal="true" aria-label="Statistik Literasi">
+        <div class="statistik-box" id="statistikBox">
+            <div class="statistik-header">
+                <div class="statistik-title">
+                    <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--ink);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+                    Statistik Literasi
+                </div>
+                <button class="statistik-close-btn" id="statistikCloseBtn" aria-label="Tutup">✕</button>
+            </div>
+
+            <div class="statistik-item-label">Catatan</div>
+            <div class="statistik-cards" id="statistikCatatanCards">
+                <div class="statistik-card">
+                    <div class="statistik-card-icon">📝</div>
+                    <div class="statistik-card-value" id="statJumlahCatatan">0</div>
+                    <div class="statistik-card-label">Total Catatan</div>
+                </div>
+                <div class="statistik-card">
+                    <div class="statistik-card-icon">⭐</div>
+                    <div class="statistik-card-value" id="statPinnedCatatan">0</div>
+                    <div class="statistik-card-label">Dipin</div>
+                </div>
+            </div>
+
+            <div class="statistik-item-label">Literasi Catatan</div>
+            <div class="statistik-cards three">
+                <div class="statistik-card">
+                    <div class="statistik-card-icon">💬</div>
+                    <div class="statistik-card-value" id="statTotalKata">0</div>
+                    <div class="statistik-card-label">Total Kata</div>
+                </div>
+                <div class="statistik-card">
+                    <div class="statistik-card-icon">🔤</div>
+                    <div class="statistik-card-value" id="statTotalKarakter">0</div>
+                    <div class="statistik-card-label">Karakter</div>
+                </div>
+                <div class="statistik-card">
+                    <div class="statistik-card-icon">⏱️</div>
+                    <div class="statistik-card-value" id="statEstimasiBaca">0 mnt</div>
+                    <div class="statistik-card-label">Est. Baca</div>
+                </div>
+            </div>
+
+            <div class="statistik-divider"></div>
+
+            <!-- Grafik Biru -->
+            <div class="statistik-item-label">Grafik Perbandingan</div>
+            <div class="statistik-chart-wrap">
+                <div class="statistik-chart-title">Distribusi Konten — nilai "Kata ÷10" agar sebanding</div>
+                <div class="statistik-bar-chart" id="statistikBarChart">
+                    <!-- Diisi via JS -->
+                </div>
+            </div>
+
+            <div class="statistik-item-label">Buku &amp; Bab</div>
+            <div class="statistik-cards three">
+                <div class="statistik-card">
+                    <div class="statistik-card-icon">📚</div>
+                    <div class="statistik-card-value" id="statJumlahBuku">0</div>
+                    <div class="statistik-card-label">Total Buku</div>
+                </div>
+                <div class="statistik-card">
+                    <div class="statistik-card-icon">📖</div>
+                    <div class="statistik-card-value" id="statJumlahBab">0</div>
+                    <div class="statistik-card-label">Total Bab</div>
+                </div>
+                <div class="statistik-card">
+                    <div class="statistik-card-icon">💬</div>
+                    <div class="statistik-card-value" id="statKataBuku">0</div>
+                    <div class="statistik-card-label">Kata Buku</div>
+                </div>
+            </div>
+
+            <div class="statistik-read-row">
+                <div class="statistik-read-left">
+                    <div class="statistik-read-icon">⏳</div>
+                    <div class="statistik-read-label">Est. Baca Semua Buku</div>
+                </div>
+                <div class="statistik-read-val" id="statEstimasiBacaBuku">0 mnt</div>
+            </div>
+        </div>
+    </div>
 
     <!-- FAB BUTTON -->
     <button class="fab" id="openEditor" aria-label="Buka menu">+</button>
@@ -3683,6 +4315,60 @@
         </div>
     </div>
 
+    <!-- TEMPLATE PICKER OVERLAY -->
+    <div class="template-overlay" id="templateOverlay" role="dialog" aria-modal="true" aria-label="Pilih Template">
+        <div class="template-box">
+            <div class="template-handle"></div>
+            <div class="template-header">
+                <div class="template-title">✏️ Pilih Template</div>
+                <button class="template-close-btn" id="templateCloseBtn" aria-label="Tutup">✕</button>
+            </div>
+            <p class="template-subtitle">Mulai dengan template atau tulis dari awal.</p>
+            <div class="template-list">
+                <div class="template-card" id="tplBlog" data-tpl="blog">
+                    <div class="template-card-icon blog">📰</div>
+                    <div class="template-card-body">
+                        <div class="template-card-name">Template Blog</div>
+                        <div class="template-card-desc">Artikel terstruktur dengan pembuka, isi, dan penutup.</div>
+                    </div>
+                    <span class="template-card-arrow">›</span>
+                </div>
+                <div class="template-card" id="tplHarian" data-tpl="harian">
+                    <div class="template-card-icon harian">📔</div>
+                    <div class="template-card-body">
+                        <div class="template-card-name">Template Catatan Harian</div>
+                        <div class="template-card-desc">Jurnal harian dengan suasana, kegiatan, dan refleksi.</div>
+                    </div>
+                    <span class="template-card-arrow">›</span>
+                </div>
+                <div class="template-card" id="tplTodo" data-tpl="todo">
+                    <div class="template-card-icon todo">✅</div>
+                    <div class="template-card-body">
+                        <div class="template-card-name">Template To-Do List</div>
+                        <div class="template-card-desc">Daftar tugas terorganisir dengan prioritas dan catatan.</div>
+                    </div>
+                    <span class="template-card-arrow">›</span>
+                </div>
+            </div>
+            <button class="template-blank-btn" id="tplBlank">
+                <span>📄</span> Mulai dari Awal (Kosong)
+            </button>
+        </div>
+    </div>
+
+    <!-- NOTE ACTION POPUP (long press catatan) -->
+    <div class="note-action-popup" id="noteActionPopup" role="menu" aria-label="Aksi catatan">
+        <button class="note-action-btn delete-action" id="noteActionDelete" aria-label="Hapus catatan">
+            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            <span class="note-action-label">Hapus</span>
+        </button>
+        <div class="note-action-divider"></div>
+        <button class="note-action-btn pin-action" id="noteActionPin" aria-label="Pin catatan">
+            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span class="note-action-label" id="noteActionPinLabel">Pin</span>
+        </button>
+    </div>
+
     <script>
     // ─────────────────────────────────────────
     // 1. PREVENT KEYBOARD REFRESH
@@ -3894,6 +4580,80 @@
         return div.textContent || div.innerText || '';
     }
 
+    // ─────────────────────────────────────────
+    // NOTE ACTION POPUP SYSTEM
+    // ─────────────────────────────────────────
+    const noteActionPopup  = document.getElementById('noteActionPopup');
+    const noteActionDelete = document.getElementById('noteActionDelete');
+    const noteActionPin    = document.getElementById('noteActionPin');
+    const noteActionPinLabel = document.getElementById('noteActionPinLabel');
+    let _popupNoteId = null;
+    let _popupNotePinned = false;
+
+    function openNoteActionPopup(noteId, isPinned, anchorEl) {
+        _popupNoteId = noteId;
+        _popupNotePinned = isPinned;
+        // Update pin button state
+        noteActionPin.classList.toggle('pinned', isPinned);
+        noteActionPinLabel.textContent = isPinned ? 'Lepas Pin' : 'Pin';
+        // Position popup near the card
+        const rect = anchorEl.getBoundingClientRect();
+        const popupW = 180;
+        let left = rect.left + rect.width / 2 - popupW / 2;
+        let top  = rect.top - 10;
+        // Clamp to viewport
+        left = Math.max(10, Math.min(left, window.innerWidth - popupW - 10));
+        if (top - 90 < 10) top = rect.bottom + 10;
+        else top = rect.top - 90;
+        noteActionPopup.style.left = left + 'px';
+        noteActionPopup.style.top  = top + 'px';
+        noteActionPopup.style.width = popupW + 'px';
+        noteActionPopup.classList.add('open');
+    }
+
+    function closeNoteActionPopup() {
+        noteActionPopup.classList.remove('open');
+        _popupNoteId = null;
+    }
+
+    noteActionDelete.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (_popupNoteId === null) return;
+        const nid = _popupNoteId;
+        closeNoteActionPopup();
+        resumeAudio(); playBtnSound('delete');
+        // Cari judul catatan
+        const cardEl = document.querySelector('.note-card[data-note-id="' + nid + '"]');
+        const titleEl = cardEl ? cardEl.querySelector('h3') : null;
+        const titleTxt = titleEl ? titleEl.textContent : 'Catatan ini';
+        document.getElementById('deleteModalDesc').innerText =
+            `"${titleTxt}" akan dihapus secara permanen dan tidak dapat dikembalikan.`;
+        pendingDeleteId = nid;
+        deleteModal.classList.add('open');
+    });
+
+    noteActionPin.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const nid = _popupNoteId;
+        closeNoteActionPopup();
+        if (nid === null) return;
+        resumeAudio(); playBtnSound('tap');
+        togglePinNote(nid);
+    });
+
+    // Tutup popup saat klik di luar
+    document.addEventListener('click', (e) => {
+        if (noteActionPopup.classList.contains('open') && !noteActionPopup.contains(e.target)) {
+            closeNoteActionPopup();
+        }
+    }, true);
+
+    document.addEventListener('touchstart', (e) => {
+        if (noteActionPopup.classList.contains('open') && !noteActionPopup.contains(e.target)) {
+            closeNoteActionPopup();
+        }
+    }, { passive: true });
+
     function displayNotes() {
         notesGrid.innerHTML = "";
         const container = document.querySelector('.container');
@@ -3906,9 +4666,11 @@
             if (notes.length > 0) {
                 emptyMsg.style.display = "none";
                 container.classList.remove('empty-state');
-                // Restore normal padding
                 container.style.padding = '';
-                notes.reverse().forEach(note => {
+                // Balik urutan, lalu pinned di atas
+                const sorted = notes.slice().reverse();
+                sorted.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+                sorted.forEach(note => {
                     const wrap = document.createElement('div');
                     wrap.className = 'note-card-wrap';
 
@@ -3920,29 +4682,41 @@
 
                     const card = document.createElement('div');
                     card.className = 'note-card';
+                    if (note.pinned) card.classList.add('pinned');
                     card.setAttribute('role', 'button');
                     card.setAttribute('tabindex', '0');
                     card.dataset.noteId = note.id;
                     const preview = escapeHtml(getPlainText(note.content));
+                    const pinnedBadge = note.pinned ? '<div class="pin-badge">⭐ Dipin</div>' : '';
                     card.innerHTML = `
+                        ${pinnedBadge}
                         <h3>${escapeHtml(note.title)}</h3>
                         <p>${preview}</p>
                         <small>${note.date}</small>
                     `;
+
+                    card.style.position = 'relative';
+
                     attachLongPress(
                         card,
                         () => {
-                            // Tap: jika select mode, toggle; jika tidak, buka edit
+                            // Tap: buka edit atau toggle select
                             if (isSelectMode) {
                                 toggleSelectCard(note.id);
                             } else {
+                                // Tutup popup jika sedang terbuka
+                                if (noteActionPopup.classList.contains('open')) {
+                                    closeNoteActionPopup();
+                                    return;
+                                }
                                 openEditMode(note);
                             }
                         },
                         () => {
-                            // Long press: masuk select mode dan pilih catatan ini
+                            // Long press: tampilkan action popup
                             if (!isSelectMode) {
-                                enterSelectMode(note.id);
+                                resumeAudio(); playBtnSound('tap');
+                                openNoteActionPopup(note.id, !!note.pinned, card);
                             }
                         }
                     );
@@ -4272,6 +5046,82 @@
         fabBackdrop.classList.remove('open');
     }
 
+    // ─────────────────────────────────────────
+    // TEMPLATE PICKER
+    // ─────────────────────────────────────────
+    const templateOverlay = document.getElementById('templateOverlay');
+
+    function openTemplatePicker() {
+        templateOverlay.classList.add('open');
+        history.pushState({ templateOpen: true }, '');
+    }
+
+    function closeTemplatePicker() {
+        templateOverlay.classList.remove('open');
+    }
+
+    document.getElementById('templateCloseBtn').addEventListener('click', () => {
+        closeTemplatePicker();
+        history.back();
+    });
+
+    templateOverlay.addEventListener('click', (e) => {
+        if (e.target === templateOverlay) {
+            closeTemplatePicker();
+            history.back();
+        }
+    });
+
+    // Konten template
+    function getTemplateContent(tpl) {
+        const today = new Date().toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+        if (tpl === 'blog') {
+            return {
+                title: 'Judul Artikel Blog',
+                content: `<div style="font-family:'Lora',serif;font-size:1.05rem;line-height:1.7;color:inherit"><p style="font-weight:700;font-size:1.15rem;margin-bottom:10px;border-bottom:2px solid #e8e3db;padding-bottom:8px">📰 Pembuka</p><p>Tulis kalimat pembuka yang menarik perhatian pembaca di sini. Ceritakan tentang apa artikel ini dan mengapa penting untuk dibaca.</p><br><p style="font-weight:700;font-size:1.15rem;margin-bottom:10px;border-bottom:2px solid #e8e3db;padding-bottom:8px">📖 Isi Artikel</p><p>Poin 1 — Jelaskan ide atau argumen pertamamu di sini.</p><br><p>Poin 2 — Lanjutkan dengan ide atau argumen berikutnya.</p><br><p>Poin 3 — Tambahkan contoh, data, atau kutipan untuk mendukung argumenmu.</p><br><p style="font-weight:700;font-size:1.15rem;margin-bottom:10px;border-bottom:2px solid #e8e3db;padding-bottom:8px">✍️ Penutup</p><p>Tulis kesimpulan atau ajakan bertindak (call to action) di sini. Ringkas poin utama dan berikan pesan akhir yang berkesan.</p></div>`
+            };
+        } else if (tpl === 'harian') {
+            return {
+                title: `Harian — ${today}`,
+                content: `<div style="font-family:'Merriweather',serif;font-size:0.97rem;line-height:1.75;color:inherit"><p style="font-size:1.1rem;font-weight:700;color:#e67e22;margin-bottom:6px">📔 ${today}</p><p style="background:rgba(230,126,34,0.08);border-left:3px solid #e67e22;padding:8px 12px;border-radius:0 8px 8px 0;font-style:italic;margin-bottom:16px">Suasana hari ini: ☀️ Cerah &nbsp;/&nbsp; 🌥️ Mendung &nbsp;/&nbsp; 🌧️ Hujan</p><p style="font-weight:700;margin-bottom:6px">🌅 Pagi — Apa yang terjadi pagi ini?</p><p>Tuliskan di sini...</p><br><p style="font-weight:700;margin-bottom:6px">🌞 Siang — Kegiatan utama hari ini:</p><p>Tuliskan di sini...</p><br><p style="font-weight:700;margin-bottom:6px">🌙 Malam — Refleksi & rasa syukur:</p><p>Hari ini aku bersyukur karena...</p><br><p style="font-weight:700;margin-bottom:6px">💡 Pelajaran hari ini:</p><p>Tuliskan di sini...</p></div>`
+            };
+        } else if (tpl === 'todo') {
+            return {
+                title: `To-Do — ${new Date().toLocaleDateString('id-ID')}`,
+                content: `<div style="font-family:'Poppins',sans-serif;font-size:0.95rem;line-height:1.7;color:inherit"><p style="font-weight:700;font-size:1.05rem;color:#059669;margin-bottom:12px">✅ Daftar Tugas Hari Ini</p><p style="font-weight:700;color:#ef4444;margin-bottom:6px">🔴 Prioritas Tinggi</p><p>☐ &nbsp;Tugas penting 1</p><p>☐ &nbsp;Tugas penting 2</p><p>☐ &nbsp;Tugas penting 3</p><br><p style="font-weight:700;color:#f59e0b;margin-bottom:6px">🟡 Prioritas Sedang</p><p>☐ &nbsp;Tugas menengah 1</p><p>☐ &nbsp;Tugas menengah 2</p><br><p style="font-weight:700;color:#10b981;margin-bottom:6px">🟢 Prioritas Rendah</p><p>☐ &nbsp;Tugas opsional 1</p><p>☐ &nbsp;Tugas opsional 2</p><br><p style="background:rgba(16,185,129,0.08);border-left:3px solid #10b981;padding:8px 12px;border-radius:0 8px 8px 0;font-style:italic">📌 Catatan tambahan: Tuliskan catatan penting di sini</p></div>`
+            };
+        }
+        return { title: '', content: '' };
+    }
+
+    function applyTemplate(tpl) {
+        closeTemplatePicker();
+        const { title, content } = getTemplateContent(tpl);
+        currentEditId = null;
+        titleInput.value = title;
+        contentInput.innerHTML = content;
+        localStorage.removeItem('temp_t');
+        localStorage.removeItem('temp_c');
+        applyFontPrefs();
+        editor.classList.add('active');
+        history.pushState({ editorOpen: true }, '');
+        if (noteTitleHint) { noteTitleHint.textContent = '0 / 7 kata'; noteTitleHint.classList.remove('at-limit'); }
+        setTimeout(() => { updateSaveBtn(); updateWordCounter(); enforceWordLimit(titleInput, noteTitleHint); }, 50);
+    }
+
+    document.querySelectorAll('.template-card').forEach(card => {
+        card.addEventListener('click', () => {
+            resumeAudio(); playBtnSound('tap');
+            applyTemplate(card.dataset.tpl);
+        });
+    });
+
+    document.getElementById('tplBlank').addEventListener('click', () => {
+        resumeAudio(); playBtnSound('tap');
+        closeTemplatePicker();
+        setTimeout(openNewNote, 60);
+    });
+
     fabBtn.addEventListener('click', () => {
         fabMenu.classList.contains('open') ? closeFabMenu() : openFabMenu();
     });
@@ -4279,7 +5129,8 @@
 
     document.getElementById('btnMenulis').addEventListener('click', () => {
         closeFabMenu();
-        setTimeout(openNewNote, 80);
+        resumeAudio(); playBtnSound('tap');
+        setTimeout(() => openTemplatePicker(), 80);
     });
 
     // ─────────────────────────────────────────
@@ -4336,6 +5187,11 @@
 
     // Android back button - handle via popstate
     window.addEventListener('popstate', (e) => {
+        // Jika template picker terbuka, tutup
+        if (templateOverlay.classList.contains('open')) {
+            closeTemplatePicker();
+            return;
+        }
         // Jika exit confirm modal terbuka, tutup dulu
         if (exitConfirmModal.classList.contains('open')) {
             hideExitConfirm();
@@ -5838,13 +6694,18 @@
             return;
         }
         koleksiEmpty.style.display = 'none';
-        list.slice().reverse().forEach(function(buku) {
+        // Pinned buku di atas, lalu sisanya urutan terbaru
+        const rawList = list.slice().reverse();
+        rawList.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+        rawList.forEach(function(buku) {
             const card = document.createElement('div');
             card.className = 'koleksi-buku-card';
+            if (buku.pinned) card.classList.add('pinned');
             card.dataset.bukuId = buku.id;
 
             const cover = document.createElement('div');
             cover.className = 'koleksi-buku-cover';
+            cover.style.position = 'relative';
 
             if (buku.sampul) {
                 const img = document.createElement('img');
@@ -5858,9 +6719,10 @@
                 cover.appendChild(def);
             }
 
+            // Tombol HAPUS (tong sampah) — muncul saat long press, di kiri bintang pin
             const delBtn = document.createElement('button');
             delBtn.className = 'buku-del-btn';
-            delBtn.innerHTML = '&#10005;';
+            delBtn.innerHTML = `<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
             delBtn.setAttribute('aria-label', 'Hapus buku');
             delBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -5873,23 +6735,73 @@
             });
             cover.appendChild(delBtn);
 
+            // Tombol BINTANG PIN — muncul saat long press, toggle pin
+            const pinStarBuku = document.createElement('button');
+            pinStarBuku.className = 'buku-pin-star-btn';
+            pinStarBuku.setAttribute('aria-label', buku.pinned ? 'Lepas pin' : 'Pin buku');
+            pinStarBuku.innerHTML = `<svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+            pinStarBuku.addEventListener('click', function(e) {
+                e.stopPropagation();
+                resumeAudio(); playBtnSound('tap');
+                const allBuku = getBukuList();
+                const idx = allBuku.findIndex(b => b.id === buku.id);
+                if (idx === -1) return;
+                allBuku[idx].pinned = !allBuku[idx].pinned;
+                saveBukuList(allBuku);
+                renderKoleksiGrid();
+            });
+            cover.appendChild(pinStarBuku);
+
             const titleEl = document.createElement('div');
             titleEl.className = 'koleksi-buku-title';
-            titleEl.textContent = buku.judul;
+            // Badge pin kecil di depan judul jika dipin
+            if (buku.pinned) {
+                const pinLabel = document.createElement('span');
+                pinLabel.style.cssText = 'display:inline-block;margin-right:4px;font-size:0.75em;';
+                pinLabel.textContent = '⭐';
+                titleEl.appendChild(pinLabel);
+            }
+            titleEl.appendChild(document.createTextNode(buku.judul));
 
             const descEl = document.createElement('div');
             descEl.className = 'koleksi-buku-desc';
             descEl.textContent = buku.deskripsi || 'Tanpa deskripsi';
 
+            // Long press untuk tampilkan tombol hapus & pin
             let longPressTimer = null;
+            let lpMoved = false;
             card.addEventListener('touchstart', function() {
+                lpMoved = false;
                 longPressTimer = setTimeout(function() {
                     resumeAudio(); playBtnSound('tap');
+                    // Tutup card lain yang sedang show-del
+                    document.querySelectorAll('.koleksi-buku-card.show-del').forEach(c => {
+                        if (c !== card) c.classList.remove('show-del');
+                    });
                     card.classList.toggle('show-del');
                 }, 600);
             }, { passive: true });
             card.addEventListener('touchend', function() { clearTimeout(longPressTimer); }, { passive: true });
-            card.addEventListener('touchmove', function() { clearTimeout(longPressTimer); }, { passive: true });
+            card.addEventListener('touchmove', function() {
+                lpMoved = true;
+                clearTimeout(longPressTimer);
+            }, { passive: true });
+            card.addEventListener('touchcancel', function() { clearTimeout(longPressTimer); }, { passive: true });
+
+            // Mouse support untuk desktop
+            card.addEventListener('mousedown', function() {
+                lpMoved = false;
+                longPressTimer = setTimeout(function() {
+                    document.querySelectorAll('.koleksi-buku-card.show-del').forEach(c => {
+                        if (c !== card) c.classList.remove('show-del');
+                    });
+                    card.classList.toggle('show-del');
+                }, 600);
+            });
+            card.addEventListener('mouseup', function() { clearTimeout(longPressTimer); });
+            card.addEventListener('mouseleave', function() { clearTimeout(longPressTimer); });
+            card.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+
             card.addEventListener('click', function() {
                 if (card.classList.contains('show-del')) {
                     card.classList.remove('show-del');
@@ -6883,6 +7795,192 @@
             }, 800);
         }
     });
+    // ─────────────────────────────────────────
+    // FITUR STATISTIK LITERASI
+    // ─────────────────────────────────────────
+    (function initStatistik() {
+        const statistikOverlay = document.getElementById('statistikOverlay');
+        const statistikCloseBtn = document.getElementById('statistikCloseBtn');
+        const fabStatistik = document.getElementById('fabStatistik');
+
+        function formatAngka(n) {
+            if (n >= 1000000) return (n / 1000000).toFixed(1) + 'jt';
+            if (n >= 1000) return (n / 1000).toFixed(1) + 'rb';
+            return String(n);
+        }
+
+        function hitungStatistikCatatan(callback) {
+            if (!db) { callback({}); return; }
+            const tx = db.transaction(['notes'], 'readonly');
+            const store = tx.objectStore('notes');
+            const req = store.getAll();
+            req.onsuccess = () => {
+                const notes = req.result || [];
+                let totalKata = 0;
+                let totalKarakter = 0;
+                let pinnedCount = 0;
+
+                notes.forEach(note => {
+                    // Hitung konten (tanpa HTML tags)
+                    const contentText = getPlainText(note.content || '').trim();
+                    // Hitung judul secara terpisah
+                    const titleText = (note.title || '').trim();
+                    const fullText = (contentText + ' ' + titleText).trim();
+                    totalKarakter += fullText.replace(/\s+/g, '').length;
+                    const words = fullText.split(/\s+/).filter(w => w.length > 0);
+                    totalKata += words.length;
+                    if (note.pinned) pinnedCount++;
+                });
+
+                // Estimasi baca: rata-rata 200 kata per menit
+                const menitBaca = totalKata > 0 ? Math.ceil(totalKata / 200) : 0;
+                let estBacaStr;
+                if (menitBaca === 0) {
+                    estBacaStr = '0 mnt';
+                } else if (menitBaca < 60) {
+                    estBacaStr = menitBaca + ' mnt';
+                } else {
+                    const jam = Math.floor(menitBaca / 60);
+                    const sisa = menitBaca % 60;
+                    estBacaStr = sisa > 0 ? jam + ' j ' + sisa + ' mnt' : jam + ' jam';
+                }
+
+                callback({
+                    jumlahCatatan: notes.length,
+                    pinnedCatatan: pinnedCount,
+                    totalKata,
+                    totalKarakter,
+                    estBaca: estBacaStr,
+                    menitBaca
+                });
+            };
+            req.onerror = () => callback({});
+        }
+
+        function hitungStatistikBuku() {
+            const bukuList = getBukuList ? getBukuList() : [];
+            let totalBab = 0;
+            let totalKataBuku = 0;
+
+            bukuList.forEach(buku => {
+                const babList = allBabCache[buku.id] || [];
+                totalBab += babList.length;
+                babList.forEach(bab => {
+                    const text = getPlainTextFromHtml ? getPlainTextFromHtml(bab.content || '') : '';
+                    const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+                    totalKataBuku += words.length;
+                });
+            });
+
+            const menitBacaBuku = totalKataBuku > 0 ? Math.ceil(totalKataBuku / 200) : 0;
+            let estBacaBukuStr;
+            if (menitBacaBuku === 0) {
+                estBacaBukuStr = '0 mnt';
+            } else if (menitBacaBuku < 60) {
+                estBacaBukuStr = menitBacaBuku + ' mnt';
+            } else {
+                const jam = Math.floor(menitBacaBuku / 60);
+                const sisa = menitBacaBuku % 60;
+                estBacaBukuStr = sisa > 0 ? jam + ' j ' + sisa + ' mnt' : jam + ' jam';
+            }
+
+            return {
+                jumlahBuku: bukuList.length,
+                jumlahBab: totalBab,
+                kataBuku: totalKataBuku,
+                estBacaBuku: estBacaBukuStr
+            };
+        }
+
+        function renderStatistikChart(stat, bukuStat) {
+            const chartEl = document.getElementById('statistikBarChart');
+            if (!chartEl) return;
+            const data = [
+                { label: 'Catatan', val: stat.jumlahCatatan || 0 },
+                { label: 'Buku', val: bukuStat.jumlahBuku || 0 },
+                { label: 'Bab', val: bukuStat.jumlahBab || 0 },
+                { label: 'Kata ÷10', val: Math.round((stat.totalKata || 0) / 10) }
+            ];
+            const maxVal = Math.max(...data.map(d => d.val), 1);
+            chartEl.innerHTML = data.map((d, i) => {
+                const pct = Math.max((d.val / maxVal) * 68, d.val > 0 ? 6 : 4);
+                const isAccent = i === 0 || i === 3;
+                return `<div class="statistik-bar-col">
+                    <div class="statistik-bar-val">${d.val}</div>
+                    <div class="statistik-bar ${isAccent ? 'accent-bar' : ''}" style="height:${pct}px"></div>
+                    <div class="statistik-bar-label">${d.label}</div>
+                </div>`;
+            }).join('');
+        }
+
+        function openStatistik() {
+            // Hitung & tampilkan
+            hitungStatistikCatatan(stat => {
+                const bukuStat = hitungStatistikBuku();
+
+                document.getElementById('statJumlahCatatan').textContent = formatAngka(stat.jumlahCatatan || 0);
+                document.getElementById('statPinnedCatatan').textContent = formatAngka(stat.pinnedCatatan || 0);
+                document.getElementById('statTotalKata').textContent = formatAngka(stat.totalKata || 0);
+                document.getElementById('statTotalKarakter').textContent = formatAngka(stat.totalKarakter || 0);
+                document.getElementById('statEstimasiBaca').textContent = stat.estBaca || '0 mnt';
+
+                document.getElementById('statJumlahBuku').textContent = formatAngka(bukuStat.jumlahBuku);
+                document.getElementById('statJumlahBab').textContent = formatAngka(bukuStat.jumlahBab);
+                document.getElementById('statKataBuku').textContent = formatAngka(bukuStat.kataBuku);
+                document.getElementById('statEstimasiBacaBuku').textContent = bukuStat.estBacaBuku;
+
+                // Render grafik
+                renderStatistikChart(stat, bukuStat);
+            });
+            statistikOverlay.classList.add('open');
+            history.pushState({ statistikOpen: true }, '');
+        }
+
+        function closeStatistik() {
+            statistikOverlay.classList.remove('open');
+        }
+
+        fabStatistik.addEventListener('click', () => {
+            resumeAudio(); playBtnSound('tap');
+            openStatistik();
+        });
+
+        statistikCloseBtn.addEventListener('click', () => {
+            resumeAudio(); playBtnSound('tap');
+            closeStatistik();
+        });
+
+        statistikOverlay.addEventListener('click', (e) => {
+            if (e.target === statistikOverlay) closeStatistik();
+        });
+
+        window.addEventListener('popstate', (e) => {
+            if (statistikOverlay.classList.contains('open')) {
+                closeStatistik();
+                history.pushState({ appRoot: true }, '');
+            }
+        });
+    })();
+
+    // ─────────────────────────────────────────
+    // FITUR PIN / FAVORIT CATATAN
+    // ─────────────────────────────────────────
+    function togglePinNote(noteId) {
+        if (!db) return;
+        const tx = db.transaction(['notes'], 'readwrite');
+        const store = tx.objectStore('notes');
+        const req = store.get(noteId);
+        req.onsuccess = () => {
+            const note = req.result;
+            if (!note) return;
+            note.pinned = !note.pinned;
+            store.put(note).onsuccess = () => {
+                displayNotes();
+            };
+        };
+    }
+    // Pin buku sudah terintegrasi langsung di renderKoleksiGrid()
+
     </script>
 </body>
-</html>
+    </html>
