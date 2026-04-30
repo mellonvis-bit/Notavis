@@ -3,7 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Notavis v1.4.5</title>
+    <title>Notavis v1.5.0</title>
+    <!-- PWA -->
+    <link rel="manifest" id="pwaManifest">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Notavis">
+    <link rel="apple-touch-icon" id="appleTouchIcon" href="">
     <style>
         /* ── FONT ── */
         @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Source+Code+Pro:wght@400;600&family=Nunito:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Poppins:wght@400;500;600;700&family=Dancing+Script:wght@400;600;700&family=Raleway:ital,wght@0,400;0,600;0,700;1,400&family=Josefin+Sans:ital,wght@0,400;0,600;1,400&family=Ubuntu:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600;700&family=Roboto+Slab:wght@400;600;700&family=Ubuntu+Mono:wght@400;700&display=swap');
@@ -3597,6 +3605,254 @@
         body.dark-mode .template-box { background: #161a1d; }
         body.dark-mode .template-card { background: #111416; border-color: #2a2e32; }
         body.dark-mode .template-card:hover { background: #1a1e22; }
+
+        /* ── DOWNLOAD APK MODAL ── */
+        .apk-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.62);
+            z-index: 700;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s var(--ease);
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+        .apk-modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .apk-modal-box {
+            background: var(--paper);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 28px 28px 0 0;
+            padding: 0 0 36px;
+            transform: translateY(40px);
+            transition: transform 0.3s var(--ease);
+            max-height: 90vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .apk-modal-overlay.open .apk-modal-box {
+            transform: translateY(0);
+        }
+        .apk-modal-handle {
+            width: 38px; height: 4px;
+            border-radius: 2px;
+            background: var(--border);
+            margin: 14px auto 0;
+        }
+        .apk-modal-hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 24px 20px;
+            text-align: center;
+        }
+        .apk-logo-wrap {
+            width: 88px;
+            height: 88px;
+            border-radius: 22px;
+            background: #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.22);
+            margin-bottom: 16px;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .apk-logo-wrap::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0a0a0a 60%);
+        }
+        .apk-logo-wrap svg {
+            position: relative;
+            z-index: 1;
+        }
+        .apk-modal-app-name {
+            font-family: 'Lora', serif;
+            font-size: 1.55rem;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: -0.4px;
+            margin-bottom: 4px;
+        }
+        .apk-modal-tagline {
+            font-size: 0.88rem;
+            color: var(--ink2);
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+        .apk-modal-url-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 0.75rem;
+            color: var(--ink2);
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .apk-features-row {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            padding: 0 24px 20px;
+            flex-wrap: wrap;
+        }
+        .apk-feature-chip {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--ink2);
+        }
+        .apk-steps {
+            padding: 0 24px 20px;
+        }
+        .apk-steps-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--ink2);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 12px;
+        }
+        .apk-step-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .apk-step-num {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .apk-step-text {
+            font-size: 0.88rem;
+            color: var(--ink);
+            line-height: 1.45;
+            font-weight: 500;
+        }
+        .apk-step-text strong {
+            color: var(--ink);
+            font-weight: 700;
+        }
+        .apk-install-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: calc(100% - 48px);
+            margin: 0 24px 12px;
+            padding: 16px 24px;
+            background: #0a0a0a;
+            color: #fff;
+            border: none;
+            border-radius: 18px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+            transition: opacity 0.18s, transform 0.18s;
+            letter-spacing: 0.2px;
+        }
+        .apk-install-btn:active { opacity: 0.8; transform: scale(0.97); }
+        .apk-install-btn svg {
+            width: 20px; height: 20px;
+            fill: none; stroke: #fff;
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+        }
+        .apk-open-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: calc(100% - 48px);
+            margin: 0 24px;
+            padding: 13px 24px;
+            background: transparent;
+            color: var(--ink2);
+            border: 1.5px solid var(--border);
+            border-radius: 18px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.18s;
+        }
+        .apk-open-btn:active { opacity: 0.6; }
+        .apk-modal-close {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: 50%;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem;
+            color: var(--ink2);
+            cursor: pointer;
+            transition: opacity 0.15s;
+        }
+        .apk-modal-close:active { opacity: 0.5; }
+        .apk-modal-pos { position: relative; }
+        .apk-install-success {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 24px 4px;
+            text-align: center;
+        }
+        .apk-install-success.show { display: flex; }
+        .apk-install-success-icon {
+            font-size: 2rem;
+            margin-bottom: 4px;
+        }
+        .apk-install-success-text {
+            font-size: 0.9rem;
+            color: var(--success);
+            font-weight: 700;
+        }
+        .apk-install-success-sub {
+            font-size: 0.8rem;
+            color: var(--ink2);
+        }
+        body.dark-mode .apk-modal-box { background: #161a1d; }
+        body.dark-mode .apk-feature-chip { background: #1a1e22; border-color: #2a2e32; }
+        body.dark-mode .apk-modal-url-badge { background: #1a1e22; border-color: #2a2e32; }
+        body.dark-mode .apk-steps { }
+        body.dark-mode .apk-install-btn { background: #f0f0f0; color: #0a0a0a; }
+        body.dark-mode .apk-install-btn svg { stroke: #0a0a0a; }
+        body.dark-mode .apk-open-btn { border-color: #2a2e32; }
     </style>
 </head>
 <body>
@@ -3676,6 +3932,13 @@
                 <button class="menu-lock-btn" id="btnEkspor" aria-label="Ekspor catatan atau buku">
                     <span>📤</span>
                     <span>Ekspor</span>
+                </button>
+
+                <!-- Tombol Download APK -->
+                <button class="menu-lock-btn" id="btnDownloadApk" aria-label="Download APK Notavis">
+                    <span>📱</span>
+                    <span>Download APK</span>
+                    <span style="margin-left:auto; font-size:0.65rem; font-weight:700; background:#0a0a0a; color:#fff; padding:3px 8px; border-radius:8px; letter-spacing:0.3px;">PWA</span>
                 </button>
 
                 <div class="seting-divider"></div>
@@ -3887,6 +4150,86 @@
 
     <!-- FAB BUTTON -->
     <button class="fab" id="openEditor" aria-label="Buka menu">+</button>
+
+    <!-- ── DOWNLOAD APK MODAL ── -->
+    <div class="apk-modal-overlay" id="apkModalOverlay" role="dialog" aria-modal="true" aria-label="Download Notavis">
+        <div class="apk-modal-box apk-modal-pos">
+            <button class="apk-modal-close" id="apkModalClose" aria-label="Tutup">✕</button>
+            <div class="apk-modal-handle"></div>
+
+            <!-- Hero / Logo -->
+            <div class="apk-modal-hero">
+                <div class="apk-logo-wrap" aria-label="Logo Notavis">
+                    <!-- Logo Notavis SVG -->
+                    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Buku terbuka -->
+                        <path d="M10 14 C10 14 14 12 28 12 C42 12 46 14 46 14 L46 44 C46 44 42 42 28 42 C14 42 10 44 10 44 Z" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round"/>
+                        <line x1="28" y1="12" x2="28" y2="42" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+                        <!-- Garis buku kiri -->
+                        <line x1="14" y1="18" x2="25" y2="17" stroke="rgba(255,255,255,0.55)" stroke-width="1.6" stroke-linecap="round"/>
+                        <line x1="14" y1="23" x2="25" y2="22" stroke="rgba(255,255,255,0.55)" stroke-width="1.6" stroke-linecap="round"/>
+                        <line x1="14" y1="28" x2="25" y2="27" stroke="rgba(255,255,255,0.4)" stroke-width="1.6" stroke-linecap="round"/>
+                        <!-- Garis buku kanan -->
+                        <line x1="31" y1="17" x2="42" y2="18" stroke="rgba(255,255,255,0.55)" stroke-width="1.6" stroke-linecap="round"/>
+                        <line x1="31" y1="22" x2="42" y2="23" stroke="rgba(255,255,255,0.55)" stroke-width="1.6" stroke-linecap="round"/>
+                        <line x1="31" y1="27" x2="42" y2="28" stroke="rgba(255,255,255,0.4)" stroke-width="1.6" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="apk-modal-app-name">Notavis</div>
+                <div class="apk-modal-tagline">Catatan &amp; Buku — Pribadi &amp; Offline</div>
+                <div class="apk-modal-url-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    mellonvis-bit.github.io/Notavis
+                </div>
+            </div>
+
+            <!-- Feature chips -->
+            <div class="apk-features-row">
+                <div class="apk-feature-chip">🔒 100% Lokal</div>
+                <div class="apk-feature-chip">📴 Offline</div>
+                <div class="apk-feature-chip">📚 Catatan &amp; Buku</div>
+            </div>
+
+            <!-- Langkah instalasi (tampil jika browser tidak support prompt) -->
+            <div class="apk-steps" id="apkStepsManual" style="display:none">
+                <div class="apk-steps-title">Cara Instal di HP</div>
+                <div class="apk-step-row">
+                    <div class="apk-step-num">1</div>
+                    <div class="apk-step-text">Buka <strong>mellonvis-bit.github.io/Notavis</strong> di browser HP kamu</div>
+                </div>
+                <div class="apk-step-row">
+                    <div class="apk-step-num">2</div>
+                    <div class="apk-step-text">Tap ikon <strong>⋮ Menu / Bagikan</strong> di browser</div>
+                </div>
+                <div class="apk-step-row">
+                    <div class="apk-step-num">3</div>
+                    <div class="apk-step-text">Pilih <strong>"Tambahkan ke Layar Utama"</strong> atau <strong>"Install App"</strong></div>
+                </div>
+                <div class="apk-step-row">
+                    <div class="apk-step-num">4</div>
+                    <div class="apk-step-text">Tap <strong>Instal</strong> — Notavis siap digunakan seperti aplikasi!</div>
+                </div>
+            </div>
+
+            <!-- Success state -->
+            <div class="apk-install-success" id="apkInstallSuccess">
+                <div class="apk-install-success-icon">🎉</div>
+                <div class="apk-install-success-text">Notavis berhasil diinstal!</div>
+                <div class="apk-install-success-sub">Buka Notavis dari layar utama HP kamu.</div>
+            </div>
+
+            <!-- Tombol Install -->
+            <button class="apk-install-btn" id="apkInstallBtn">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Instal Notavis
+            </button>
+            <!-- Tombol Buka di Browser -->
+            <button class="apk-open-btn" id="apkOpenBrowserBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                Buka di Browser
+            </button>
+        </div>
+    </div>
 
     <!-- ── EDITOR OVERLAY ── -->
     <div class="editor-overlay" id="editor" aria-label="Editor catatan">
@@ -7980,6 +8323,184 @@
         };
     }
     // Pin buku sudah terintegrasi langsung di renderKoleksiGrid()
+
+    // ─────────────────────────────────────────
+    // PWA SETUP & DOWNLOAD APK
+    // ─────────────────────────────────────────
+    (function initPWA() {
+        const NOTAVIS_URL = 'https://mellonvis-bit.github.io/Notavis/';
+
+        // ── Logo SVG untuk PWA icon (data URI) ──
+        const logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <rect width="512" height="512" rx="100" fill="#0a0a0a"/>
+            <rect width="512" height="512" rx="100" fill="url(#ng)" opacity="0.5"/>
+            <defs>
+                <linearGradient id="ng" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#1a1a2e"/>
+                    <stop offset="1" stop-color="#0a0a0a"/>
+                </linearGradient>
+            </defs>
+            <path d="M120 148 C120 148 160 128 256 128 C352 128 392 148 392 148 L392 384 C392 384 352 364 256 364 C160 364 120 384 120 384 Z" fill="none" stroke="#ffffff" stroke-width="20" stroke-linejoin="round"/>
+            <line x1="256" y1="128" x2="256" y2="364" stroke="#ffffff" stroke-width="20" stroke-linecap="round"/>
+            <line x1="145" y1="190" x2="232" y2="183" stroke="rgba(255,255,255,0.55)" stroke-width="16" stroke-linecap="round"/>
+            <line x1="145" y1="235" x2="232" y2="228" stroke="rgba(255,255,255,0.55)" stroke-width="16" stroke-linecap="round"/>
+            <line x1="145" y1="280" x2="232" y2="273" stroke="rgba(255,255,255,0.38)" stroke-width="16" stroke-linecap="round"/>
+            <line x1="280" y1="183" x2="367" y2="190" stroke="rgba(255,255,255,0.55)" stroke-width="16" stroke-linecap="round"/>
+            <line x1="280" y1="228" x2="367" y2="235" stroke="rgba(255,255,255,0.55)" stroke-width="16" stroke-linecap="round"/>
+            <line x1="280" y1="273" x2="367" y2="280" stroke="rgba(255,255,255,0.38)" stroke-width="16" stroke-linecap="round"/>
+        </svg>`;
+
+        const iconDataUrl = 'data:image/svg+xml;base64,' + btoa(logoSvg);
+
+        // Set apple touch icon
+        const appleIconEl = document.getElementById('appleTouchIcon');
+        if (appleIconEl) appleIconEl.href = iconDataUrl;
+
+        // Buat dan inject manifest dinamis
+        try {
+            const manifest = {
+                name: 'Notavis',
+                short_name: 'Notavis',
+                description: 'Aplikasi catatan dan buku pribadi — offline & lokal',
+                start_url: NOTAVIS_URL,
+                scope: NOTAVIS_URL,
+                display: 'standalone',
+                orientation: 'portrait',
+                background_color: '#f4f1ec',
+                theme_color: '#0a0a0a',
+                lang: 'id',
+                icons: [
+                    { src: iconDataUrl, sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' },
+                    { src: iconDataUrl, sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
+                ]
+            };
+            const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+            const manifestUrl = URL.createObjectURL(blob);
+            const manifestEl = document.getElementById('pwaManifest');
+            if (manifestEl) manifestEl.href = manifestUrl;
+        } catch(e) {}
+
+        // Register Service Worker (hanya berfungsi di HTTPS / domain resmi)
+        if ('serviceWorker' in navigator) {
+            try {
+                const swCode = `
+self.addEventListener('install', e => self.skipWaiting());
+self.addEventListener('activate', e => e.waitUntil(clients.claim()));
+self.addEventListener('fetch', e => {
+    if (e.request.url.startsWith('${NOTAVIS_URL}')) {
+        e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+    }
+});`;
+                const swBlob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(swBlob);
+                navigator.serviceWorker.register(swUrl, { scope: '/' }).catch(() => {});
+            } catch(e) {}
+        }
+
+        // Tangkap beforeinstallprompt
+        let deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        // ── MODAL LOGIC ──
+        const overlay = document.getElementById('apkModalOverlay');
+        const closeBtn = document.getElementById('apkModalClose');
+        const installBtn = document.getElementById('apkInstallBtn');
+        const openBrowserBtn = document.getElementById('apkOpenBrowserBtn');
+        const stepsManual = document.getElementById('apkStepsManual');
+        const successEl = document.getElementById('apkInstallSuccess');
+        const menuDownloadBtn = document.getElementById('btnDownloadApk');
+
+        function openApkModal() {
+            overlay.classList.add('open');
+            // Cek apakah sudah terinstall sebagai PWA
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+                || window.navigator.standalone === true;
+            if (isStandalone) {
+                successEl.classList.add('show');
+                installBtn.style.display = 'none';
+                stepsManual.style.display = 'none';
+            } else {
+                successEl.classList.remove('show');
+                installBtn.style.display = '';
+                // Tampilkan langkah manual jika tidak ada prompt otomatis
+                stepsManual.style.display = deferredPrompt ? 'none' : 'block';
+            }
+            history.pushState({ apkModalOpen: true }, '');
+        }
+
+        function closeApkModal() {
+            overlay.classList.remove('open');
+        }
+
+        if (menuDownloadBtn) {
+            menuDownloadBtn.addEventListener('click', () => {
+                // Tutup menu drawer dulu
+                const menuOverlay = document.getElementById('menuOverlay');
+                if (menuOverlay) menuOverlay.classList.remove('open');
+                document.body.classList.remove('menu-open');
+                // Buka modal download
+                setTimeout(() => {
+                    resumeAudio && resumeAudio();
+                    playBtnSound && playBtnSound('tap');
+                    openApkModal();
+                }, 200);
+            });
+        }
+
+        if (closeBtn) closeBtn.addEventListener('click', closeApkModal);
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeApkModal();
+        });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    // Trigger install prompt browser
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    deferredPrompt = null;
+                    if (outcome === 'accepted') {
+                        successEl.classList.add('show');
+                        installBtn.style.display = 'none';
+                        stepsManual.style.display = 'none';
+                    }
+                } else {
+                    // Tampilkan langkah manual
+                    stepsManual.style.display = 'block';
+                    installBtn.textContent = 'Buka di GitHub Pages';
+                    installBtn.onclick = () => window.open(NOTAVIS_URL, '_blank');
+                }
+            });
+        }
+
+        if (openBrowserBtn) {
+            openBrowserBtn.addEventListener('click', () => {
+                window.open(NOTAVIS_URL, '_blank');
+            });
+        }
+
+        // Handle back button
+        window.addEventListener('popstate', (e) => {
+            if (overlay && overlay.classList.contains('open')) {
+                closeApkModal();
+                history.pushState({ appRoot: true }, '');
+            }
+        });
+
+        // Deteksi setelah berhasil install
+        window.addEventListener('appinstalled', () => {
+            deferredPrompt = null;
+            if (overlay.classList.contains('open')) {
+                successEl.classList.add('show');
+                installBtn.style.display = 'none';
+                stepsManual.style.display = 'none';
+            }
+        });
+    })();
 
     </script>
 </body>
