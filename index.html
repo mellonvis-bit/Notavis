@@ -1198,6 +1198,273 @@
             .fab-menu { bottom: calc(22px + 72px + 14px); right: 20px; }
         }
 
+        /* ── COLOR TEXT PICKER PANEL ── */
+        .color-text-swatch {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: transform 0.18s var(--ease), border-color 0.18s, box-shadow 0.18s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.22);
+            flex-shrink: 0;
+            position: relative;
+            outline: none;
+        }
+        .color-text-swatch::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.4);
+        }
+        .color-text-swatch.selected {
+            border-color: var(--ink);
+            transform: scale(1.2);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.32);
+        }
+        .color-text-swatch:active { transform: scale(0.88) !important; }
+
+        .color-swatch-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--ink2);
+            text-align: center;
+            margin-top: 4px;
+            white-space: nowrap;
+        }
+        .color-text-swatches-row {
+            display: flex;
+            gap: 16px;
+            align-items: flex-end;
+        }
+        .color-text-swatch-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .color-picker-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+        .color-picker-close-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(192,57,43,0.1);
+            border: 1.5px solid rgba(192,57,43,0.25);
+            border-radius: 20px;
+            color: #c0392b;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 5px 12px;
+            cursor: pointer;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+        .color-picker-close-btn:active { opacity: 0.7; }
+        body.dark-mode .color-picker-close-btn { background: rgba(231,76,60,0.15); border-color: rgba(231,76,60,0.3); color: #e74c3c; }
+
+        .color-picker-ubah-semua {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: var(--bg);
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            cursor: pointer;
+            user-select: none;
+        }
+        .color-picker-ubah-semua input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent);
+            flex-shrink: 0;
+            border-radius: 4px;
+        }
+        .color-picker-ubah-semua-label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--ink);
+            cursor: pointer;
+        }
+
+        /* Color mode active: crosshair cursor on content */
+        body.color-mode-active .content-input {
+            cursor: crosshair !important;
+        }
+        body.color-mode-active .content-input * {
+            cursor: crosshair !important;
+        }
+
+        /* Visual hint when color mode is active */
+        .editor-overlay.color-mode-on .editor-toolbar {
+            border-top-color: var(--accent);
+            box-shadow: 0 -2px 0 var(--accent);
+        }
+
+        /* ── MARKDOWN HELP PANEL ── */
+        .md-help-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.52);
+            z-index: 600;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.22s var(--ease);
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+        .md-help-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .md-help-box {
+            background: var(--paper);
+            width: 100%;
+            max-width: 520px;
+            border-radius: 24px 24px 0 0;
+            padding: 0 0 32px;
+            transform: translateY(30px);
+            transition: transform 0.28s var(--ease);
+            max-height: 90vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .md-help-overlay.open .md-help-box { transform: translateY(0); }
+        .md-help-handle {
+            width: 38px; height: 4px;
+            border-radius: 2px;
+            background: var(--border);
+            margin: 14px auto 0;
+        }
+        .md-help-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .md-help-title {
+            font-family: 'Lora', serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .md-help-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--ink2);
+            cursor: pointer;
+            padding: 4px 8px;
+            line-height: 1;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+        .md-help-close:active { opacity: 0.5; }
+        .md-help-body {
+            padding: 16px 20px 0;
+        }
+        .md-help-section-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--ink2);
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+            margin: 14px 0 8px;
+        }
+        .md-help-section-label:first-child { margin-top: 0; }
+        .md-help-row {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            padding: 9px 14px;
+            border-radius: 12px;
+            background: var(--bg);
+            margin-bottom: 7px;
+            border: 1px solid var(--border);
+        }
+        .md-help-syntax {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 0.82rem;
+            color: var(--accent);
+            background: rgba(0,0,0,0.05);
+            padding: 3px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+            min-width: 110px;
+            flex-shrink: 0;
+        }
+        body.dark-mode .md-help-syntax { background: rgba(255,255,255,0.07); }
+        .md-help-arrow {
+            color: var(--ink2);
+            font-size: 0.9rem;
+            margin: 0 10px;
+            flex-shrink: 0;
+        }
+        .md-help-preview {
+            font-size: 0.9rem;
+            color: var(--ink);
+            flex: 1;
+        }
+        /* preview styles */
+        .md-preview-bold { font-weight: 800; }
+        .md-preview-italic { font-style: italic; }
+        .md-preview-strike { text-decoration: line-through; color: var(--ink2); }
+        .md-preview-underline { text-decoration: underline; }
+        .md-preview-highlight { background: #ffe066; padding: 1px 5px; border-radius: 4px; color: #6b5900; }
+        body.dark-mode .md-preview-highlight { background: #7a6200; color: #ffe066; }
+        .md-preview-code { font-family: 'Source Code Pro', monospace; font-size: 0.8rem; background: rgba(0,0,0,0.06); padding: 2px 7px; border-radius: 5px; color: #c0392b; }
+        body.dark-mode .md-preview-code { background: rgba(255,255,255,0.08); color: #e74c3c; }
+        .md-preview-h1 { font-family: 'Lora', serif; font-size: 1.2rem; font-weight: 700; }
+        .md-preview-h2 { font-family: 'Lora', serif; font-size: 1.05rem; font-weight: 700; }
+        .md-preview-h3 { font-family: 'Lora', serif; font-size: 0.95rem; font-weight: 700; }
+        .md-preview-quote { border-left: 3px solid var(--accent); padding-left: 8px; color: var(--ink2); font-style: italic; font-size: 0.88rem; }
+        .md-preview-hr { display: block; width: 100%; height: 1px; background: var(--border); border: none; margin: 2px 0; }
+        .md-preview-sup { font-size: 0.65em; vertical-align: super; }
+        .md-preview-sub { font-size: 0.65em; vertical-align: sub; }
+        .md-help-tip {
+            font-size: 0.78rem;
+            color: var(--ink2);
+            background: var(--bg);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-top: 12px;
+            line-height: 1.5;
+            border: 1px dashed var(--border);
+        }
+        body.dark-mode .md-help-box { background: #161a1d; }
+        body.dark-mode .md-help-row { background: #111416; border-color: #2a2e32; }
+        body.dark-mode .md-help-tip { background: #111416; }
+
+        /* ── MARKDOWN RENDERED STYLES in content/bab ── */
+        .content-input strong, .bab-content-input strong { font-weight: 800; }
+        .content-input em, .bab-content-input em { font-style: italic; }
+        .content-input s, .bab-content-input s { text-decoration: line-through; color: var(--ink2); }
+        .content-input u, .bab-content-input u { text-decoration: underline; }
+        .content-input mark, .bab-content-input mark { background: #ffe066; padding: 1px 4px; border-radius: 3px; color: #6b5900; }
+        body.dark-mode .content-input mark, body.dark-mode .bab-content-input mark { background: #7a6200; color: #ffe066; }
+        .content-input code, .bab-content-input code { font-family: 'Source Code Pro', monospace; font-size: 0.85em; background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 4px; color: #c0392b; }
+        body.dark-mode .content-input code, body.dark-mode .bab-content-input code { background: rgba(255,255,255,0.08); color: #e74c3c; }
+        .content-input h1, .bab-content-input h1 { font-family: 'Lora', serif; font-size: 1.5em; font-weight: 700; margin: 6px 0 2px; line-height: 1.3; }
+        .content-input h2, .bab-content-input h2 { font-family: 'Lora', serif; font-size: 1.25em; font-weight: 700; margin: 5px 0 2px; line-height: 1.3; }
+        .content-input h3, .bab-content-input h3 { font-family: 'Lora', serif; font-size: 1.1em; font-weight: 700; margin: 4px 0 2px; line-height: 1.3; }
+        .content-input blockquote, .bab-content-input blockquote { border-left: 3px solid var(--accent); padding: 4px 0 4px 12px; margin: 6px 0; color: var(--ink2); font-style: italic; }
+        .content-input hr, .bab-content-input hr { border: none; border-top: 2px solid var(--border); margin: 10px 0; }
+        .content-input sup, .bab-content-input sup { font-size: 0.65em; vertical-align: super; }
+        .content-input sub, .bab-content-input sub { font-size: 0.65em; vertical-align: sub; }
+
         /* ── WALLPAPER: warna hero text ── */
         body.has-wallpaper .hero-text h1 {
             color: #1a1a1a;
@@ -4807,6 +5074,40 @@
             </div>
         </div>
 
+        <!-- Color picker panel -->
+        <div class="font-panel" id="colorPickerPanel">
+            <div class="color-picker-header">
+                <div class="font-panel-title" style="margin-bottom:0">🎨 Warna Teks</div>
+                <button class="color-picker-close-btn" id="btnCloseColorPanel" aria-label="Berhenti mewarnai">✕ Berhenti</button>
+            </div>
+            <div class="color-text-swatches-row">
+                <div class="color-text-swatch-item">
+                    <button class="color-text-swatch" data-color="#e53e3e" style="background:#e53e3e;" title="Merah" aria-label="Warna Merah"></button>
+                    <span class="color-swatch-label">Merah</span>
+                </div>
+                <div class="color-text-swatch-item">
+                    <button class="color-text-swatch" data-color="#d4930a" style="background:#d4930a;" title="Kuning" aria-label="Warna Kuning"></button>
+                    <span class="color-swatch-label">Kuning</span>
+                </div>
+                <div class="color-text-swatch-item">
+                    <button class="color-text-swatch" data-color="#38a169" style="background:#38a169;" title="Hijau" aria-label="Warna Hijau"></button>
+                    <span class="color-swatch-label">Hijau</span>
+                </div>
+                <div class="color-text-swatch-item">
+                    <button class="color-text-swatch" data-color="#3182ce" style="background:#3182ce;" title="Biru" aria-label="Warna Biru"></button>
+                    <span class="color-swatch-label">Biru</span>
+                </div>
+                <div class="color-text-swatch-item">
+                    <button class="color-text-swatch" data-color="#805ad5" style="background:#805ad5;" title="Ungu" aria-label="Warna Ungu"></button>
+                    <span class="color-swatch-label">Ungu</span>
+                </div>
+            </div>
+            <label class="color-picker-ubah-semua" for="chkUbahSemua">
+                <input type="checkbox" id="chkUbahSemua">
+                <span class="color-picker-ubah-semua-label">Ubah semua teks &amp; judul</span>
+            </label>
+        </div>
+
         <!-- Bottom toolbar -->
         <div class="editor-toolbar">
             <button class="toolbar-btn" id="btnFontSize"   aria-label="Ukuran font">Aa</button>
@@ -4815,6 +5116,10 @@
             <button class="toolbar-btn" id="btnTextAlign"  aria-label="Posisi teks">☱</button>
             <!-- [3] Tombol upload foto -->
             <button class="toolbar-btn" id="btnImgUpload"  aria-label="Sisipkan foto">🖼</button>
+            <!-- Tombol warna teks -->
+            <button class="toolbar-btn" id="btnTextColor" aria-label="Warna teks" style="min-width:38px;padding:0 10px;font-size:1.05rem;border-radius:50%;width:38px;height:38px;" title="Warna Teks">🎨</button>
+            <!-- Tombol bantuan format markdown -->
+            <button class="toolbar-btn" id="btnMdHelp" aria-label="Panduan format teks" style="min-width:38px;padding:0 10px;font-size:1rem;font-weight:700;border-radius:50%;width:38px;height:38px;">?</button>
         </div>
 
         <!-- Hidden file input untuk upload gambar -->
@@ -5123,9 +5428,106 @@
             <button class="toolbar-btn" id="babBtnFontStyle" aria-label="Gaya tulisan">Tt</button>
             <button class="toolbar-btn" id="babBtnTextAlign" aria-label="Posisi teks">☱</button>
             <button class="toolbar-btn" id="babBtnImgUpload" aria-label="Sisipkan foto">🖼</button>
+            <!-- Tombol bantuan format markdown bab -->
+            <button class="toolbar-btn" id="babBtnMdHelp" aria-label="Panduan format teks" style="min-width:38px;padding:0 10px;font-size:1rem;font-weight:700;border-radius:50%;width:38px;height:38px;">?</button>
         </div>
         <!-- Hidden file input untuk upload gambar bab -->
         <input type="file" id="babImgFileInput" accept="image/*" style="display:none">
+    </div>
+
+    <!-- MARKDOWN FORMAT HELP OVERLAY -->
+    <div class="md-help-overlay" id="mdHelpOverlay" role="dialog" aria-modal="true" aria-label="Panduan Format Teks">
+        <div class="md-help-box">
+            <div class="md-help-handle"></div>
+            <div class="md-help-header">
+                <div class="md-help-title">
+                    <span>✏️</span>
+                    <span>Panduan Format Teks</span>
+                </div>
+                <button class="md-help-close" id="mdHelpClose" aria-label="Tutup">✕</button>
+            </div>
+            <div class="md-help-body">
+
+                <div class="md-help-section-label">Format Dasar</div>
+
+                <div class="md-help-row">
+                    <span class="md-help-syntax">*teks*</span>
+                    <span class="md-help-arrow">→</span>
+                    <span class="md-help-preview"><strong class="md-preview-bold">Tebal</strong></span>
+                </div>
+                <div class="md-help-row">
+                    <span class="md-help-syntax">_teks_</span>
+                    <span class="md-help-arrow">→</span>
+                    <span class="md-help-preview"><em class="md-preview-italic">Miring</em></span>
+                </div>
+                <div class="md-help-row">
+                    <span class="md-help-syntax">~teks~</span>
+                    <span class="md-help-arrow">→</span>
+                    <span class="md-help-preview"><s class="md-preview-strike">Coret</s></span>
+                </div>
+                <div class="md-help-row">
+                    <span class="md-help-syntax">__teks__</span>
+                    <span class="md-help-arrow">→</span>
+                    <span class="md-help-preview"><u class="md-preview-underline">Garis Bawah</u></span>
+                </div>
+                <div class="md-help-row">
+                    <span class="md-help-syntax">==teks==</span>
+                    <span class="md-help-arrow">→</span>
+                    <span class="md-help-preview"><mark class="md-preview-highlight">Sorotan</mark></span>
+                </div>
+                <div class="md-help-row">
+                    <span class="md-help-syntax">`teks`</span>
+                    <span class="md-help-arrow">→</span>
+                    <span class="md-help-preview"><code class="md-preview-code">Kode</code></span>
+                </div>
+
+                <div class="md-help-section-label">Judul</div>
+
+                <div class="md-help-row">
+                    <span class="md-help-syntax"># Judul</span>
+                    <span class="md-help-arrow">→</span>
+                    <span class="md-help-preview"><span class="md-preview-h1">Judul Besar</span></span>
+                </div>
+                <div class="md-help-row">
+                    <span class="md-help-syntax">## Judul</span>
+                    <span class="md-help-arrow">→</span>
+                    <span class="md-help-preview"><span class="md-preview-h2">Judul Sedang</span></span>
+                </div>
+                <div class="md-help-row">
+                    <span class="md-help-syntax">### Judul</span>
+                    <span class="md-help-arrow">→</span>
+                    <span class="md-help-preview"><span class="md-preview-h3">Judul Kecil</span></span>
+                </div>
+
+                <div class="md-help-section-label">Elemen Teks</div>
+
+                <div class="md-help-row">
+                    <span class="md-help-syntax">&gt; teks</span>
+                    <span class="md-help-arrow">→</span>
+                    <span class="md-help-preview"><span class="md-preview-quote">Kutipan</span></span>
+                </div>
+                <div class="md-help-row">
+                    <span class="md-help-syntax">---</span>
+                    <span class="md-help-arrow">→</span>
+                    <span class="md-help-preview"><hr class="md-preview-hr"></span>
+                </div>
+                <div class="md-help-row">
+                    <span class="md-help-syntax">^teks^</span>
+                    <span class="md-help-arrow">→</span>
+                    <span class="md-help-preview">Teks<sup class="md-preview-sup">superscript</sup></span>
+                </div>
+                <div class="md-help-row">
+                    <span class="md-help-syntax">,,teks,,</span>
+                    <span class="md-help-arrow">→</span>
+                    <span class="md-help-preview">Teks<sub class="md-preview-sub">subscript</sub></span>
+                </div>
+
+                <div class="md-help-tip">
+                    💡 <strong>Cara Pakai:</strong> Ketik simbol di awal dan akhir kata/kalimat, lalu tekan <em>spasi</em> atau <em>Enter</em> untuk mengaktifkan format. Contoh: tulis <code style="font-family:monospace;font-size:0.8em">*kata penting*</code> lalu tekan spasi.
+                </div>
+
+            </div>
+        </div>
     </div>
 
     <!-- EKSPOR MODAL -->
@@ -5895,6 +6297,8 @@
         titleInput.value       = '';
         contentInput.innerHTML = '';
         document.getElementById('status').innerText = "";
+        // Reset color mode & inline colors
+        try { closeColorPanel(true); } catch(e) {}
     }
 
     // ─────────────────────────────────────────
@@ -6189,6 +6593,16 @@
         btnFontSize.classList.remove('active-tool');
         btnFontStyle.classList.remove('active-tool');
         btnTextAlign.classList.remove('active-tool');
+        // Close color panel juga (safe: hanya dipanggil dari event handlers)
+        const _cpanel = document.getElementById('colorPickerPanel');
+        const _btnC   = document.getElementById('btnTextColor');
+        if (_cpanel) _cpanel.classList.remove('open');
+        if (_btnC)   _btnC.classList.remove('active-tool');
+        try {
+            colorModeActive = false;
+            document.body.classList.remove('color-mode-active');
+            editor.classList.remove('color-mode-on');
+        } catch(e) {}
     }
 
     btnFontSize.addEventListener('click', () => {
@@ -6276,7 +6690,17 @@
     // Close panels when tapping writing area
     document.querySelector('.writing-area').addEventListener('click', (e) => {
         if (!e.target.closest('.font-panel') && !e.target.closest('.toolbar-btn')) {
-            closeFontPanels();
+            // Jangan tutup color panel saat color mode aktif dan klik di content
+            if (colorModeActive && e.target.closest('#noteContent')) {
+                fontSizePanel.classList.remove('open');
+                fontStylePanel.classList.remove('open');
+                alignPanel.classList.remove('open');
+                btnFontSize.classList.remove('active-tool');
+                btnFontStyle.classList.remove('active-tool');
+                btnTextAlign.classList.remove('active-tool');
+            } else {
+                closeFontPanels();
+            }
         }
     });
 
@@ -6377,7 +6801,393 @@
     }
 
     // ─────────────────────────────────────────
-    // 14. [4] WARNA TOMBOL (COLOR THEME)
+    // MARKDOWN FORMAT INLINE (real-time)
+    // ─────────────────────────────────────────
+    // Daftar pola markdown yang didukung, diproses dari pola paling spesifik ke umum
+    const MD_PATTERNS = [
+        // Superscript: ^teks^
+        { re: /\^([^\^]+)\^/, tag: 'sup' },
+        // Subscript: ,,teks,,
+        { re: /,,([^,]+),,/, tag: 'sub' },
+        // Sorotan: ==teks==
+        { re: /==([^=]+)==/, tag: 'mark' },
+        // Kode inline: `teks`
+        { re: /`([^`]+)`/, tag: 'code' },
+        // Garis bawah: __teks__
+        { re: /__([^_]+)__/, tag: 'u' },
+        // Tebal: *teks*
+        { re: /\*([^\*]+)\*/, tag: 'strong' },
+        // Miring: _teks_
+        { re: /_([^_]+)_/, tag: 'em' },
+        // Coret: ~teks~
+        { re: /~([^~]+)~/, tag: 's' },
+    ];
+
+    // Pola khusus untuk baris penuh (harus di awal baris)
+    const MD_LINE_PATTERNS = [
+        // H1: # teks
+        { re: /^# (.+)$/, tag: 'h1' },
+        // H2: ## teks
+        { re: /^## (.+)$/, tag: 'h2' },
+        // H3: ### teks
+        { re: /^### (.+)$/, tag: 'h3' },
+        // Blockquote: > teks
+        { re: /^> (.+)$/, tag: 'blockquote' },
+        // HR: ---
+        { re: /^---$/, tag: 'hr' },
+    ];
+
+    /**
+     * Cek dan apply markdown pada node teks di contenteditable
+     * Dipanggil saat user menekan spasi atau Enter
+     */
+    function applyMarkdownToCurrentLine(editableEl) {
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0) return;
+
+        const range = sel.getRangeAt(0);
+        // Pastikan kursor ada di dalam editableEl
+        if (!editableEl.contains(range.startContainer)) return;
+
+        let node = range.startContainer;
+
+        // Cari text node terdekat
+        if (node.nodeType !== Node.TEXT_NODE) {
+            if (node.childNodes.length > 0) {
+                node = node.childNodes[Math.max(0, range.startOffset - 1)];
+            }
+        }
+
+        // Ambil teks baris saat ini
+        let textNode = null;
+        if (node && node.nodeType === Node.TEXT_NODE) {
+            textNode = node;
+        } else if (node && node.nodeType === Node.ELEMENT_NODE) {
+            // Mungkin sudah wrapped dalam elemen
+            return;
+        }
+
+        if (!textNode) return;
+
+        const fullText = textNode.textContent;
+
+        // ── Coba pola BARIS PENUH terlebih dahulu ──
+        for (const pattern of MD_LINE_PATTERNS) {
+            const m = fullText.match(pattern.re);
+            if (!m) continue;
+
+            if (pattern.tag === 'hr') {
+                // Ganti dengan elemen HR
+                const hr = document.createElement('hr');
+                const br = document.createElement('br');
+                const parent = textNode.parentNode;
+                parent.insertBefore(hr, textNode);
+                parent.insertBefore(br, textNode);
+                textNode.remove();
+
+                // Pindahkan kursor setelah br
+                const newRange = document.createRange();
+                newRange.setStartAfter(br);
+                newRange.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(newRange);
+                return;
+            }
+
+            // Buat elemen blok
+            const el = document.createElement(pattern.tag);
+            el.textContent = m[1];
+            const br = document.createElement('br');
+            const parent = textNode.parentNode;
+            parent.insertBefore(el, textNode);
+            parent.insertBefore(br, textNode);
+            textNode.remove();
+
+            const newRange = document.createRange();
+            newRange.setStartAfter(br);
+            newRange.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(newRange);
+            return;
+        }
+
+        // ── Coba pola INLINE ──
+        for (const pattern of MD_PATTERNS) {
+            const m = fullText.match(pattern.re);
+            if (!m) continue;
+
+            const before = fullText.substring(0, m.index);
+            const inner  = m[1];
+            const after  = fullText.substring(m.index + m[0].length);
+
+            const parent = textNode.parentNode;
+
+            // Buat fragment
+            const frag = document.createDocumentFragment();
+            if (before) frag.appendChild(document.createTextNode(before));
+
+            const el = document.createElement(pattern.tag);
+            el.textContent = inner;
+            frag.appendChild(el);
+
+            const afterNode = document.createTextNode(after);
+            frag.appendChild(afterNode);
+
+            parent.replaceChild(frag, textNode);
+
+            // Pindahkan kursor ke node setelah elemen
+            const newRange = document.createRange();
+            newRange.setStart(afterNode, 0);
+            newRange.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(newRange);
+            return;
+        }
+    }
+
+    // Pasang listener keydown pada contenteditable untuk catatan
+    contentInput.addEventListener('keydown', function(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            applyMarkdownToCurrentLine(contentInput);
+        }
+    });
+
+    // ─────────────────────────────────────────
+    // MARKDOWN HELP OVERLAY
+    // ─────────────────────────────────────────
+    const mdHelpOverlay = document.getElementById('mdHelpOverlay');
+    const mdHelpClose   = document.getElementById('mdHelpClose');
+    const btnMdHelp     = document.getElementById('btnMdHelp');
+    const babBtnMdHelp  = document.getElementById('babBtnMdHelp');
+
+    function openMdHelp() {
+        mdHelpOverlay.classList.add('open');
+        history.pushState({ mdHelpOpen: true }, '');
+    }
+
+    function closeMdHelp() {
+        mdHelpOverlay.classList.remove('open');
+    }
+
+    if (btnMdHelp) {
+        btnMdHelp.addEventListener('click', () => {
+            closeFontPanels();
+            openMdHelp();
+        });
+    }
+
+    if (babBtnMdHelp) {
+        babBtnMdHelp.addEventListener('click', () => {
+            openMdHelp();
+        });
+    }
+
+    mdHelpClose.addEventListener('click', closeMdHelp);
+    mdHelpOverlay.addEventListener('click', (e) => {
+        if (e.target === mdHelpOverlay) closeMdHelp();
+    });
+
+    // ─────────────────────────────────────────
+    // TEXT COLOR FEATURE (Tombol 🎨)
+    // ─────────────────────────────────────────
+    let colorModeActive = false;
+    let activeTextColor = null;
+
+    const colorPickerPanel   = document.getElementById('colorPickerPanel');
+    const btnTextColor       = document.getElementById('btnTextColor');
+    const btnCloseColorPanel = document.getElementById('btnCloseColorPanel');
+    const chkUbahSemua       = document.getElementById('chkUbahSemua');
+
+    function hexToRgb(hex) {
+        const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        if (!r) return null;
+        return 'rgb(' + parseInt(r[1],16) + ', ' + parseInt(r[2],16) + ', ' + parseInt(r[3],16) + ')';
+    }
+
+    function applyColorToAll(color) {
+        contentInput.style.color = color;
+        titleInput.style.color   = color;
+    }
+
+    function resetColorAll() {
+        contentInput.style.color = '';
+        titleInput.style.color   = '';
+    }
+
+    function closeColorPanel(resetAll) {
+        if (colorPickerPanel) colorPickerPanel.classList.remove('open');
+        if (btnTextColor)     btnTextColor.classList.remove('active-tool');
+        colorModeActive = false;
+        document.body.classList.remove('color-mode-active');
+        editor.classList.remove('color-mode-on');
+        document.querySelectorAll('.color-text-swatch').forEach(s => s.classList.remove('selected'));
+        activeTextColor = null;
+        if (resetAll) {
+            resetColorAll();
+            if (chkUbahSemua) chkUbahSemua.checked = false;
+        }
+    }
+
+    // Toggle color picker panel
+    if (btnTextColor) {
+        btnTextColor.addEventListener('click', () => {
+            const isOpen = colorPickerPanel.classList.contains('open');
+            // Tutup panel lain
+            fontSizePanel.classList.remove('open');
+            fontStylePanel.classList.remove('open');
+            alignPanel.classList.remove('open');
+            btnFontSize.classList.remove('active-tool');
+            btnFontStyle.classList.remove('active-tool');
+            btnTextAlign.classList.remove('active-tool');
+
+            if (!isOpen) {
+                colorPickerPanel.classList.add('open');
+                btnTextColor.classList.add('active-tool');
+                colorModeActive = true;
+                document.body.classList.add('color-mode-active');
+                editor.classList.add('color-mode-on');
+            } else {
+                closeColorPanel(false);
+            }
+        });
+    }
+
+    // Tombol ✕ Berhenti
+    if (btnCloseColorPanel) {
+        btnCloseColorPanel.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeColorPanel(true);
+        });
+    }
+
+    // Klik warna swatch
+    document.querySelectorAll('.color-text-swatch').forEach(swatch => {
+        swatch.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const color = swatch.dataset.color;
+
+            if (activeTextColor === color) {
+                // Klik swatch yang sudah aktif = deselect
+                activeTextColor = null;
+                document.querySelectorAll('.color-text-swatch').forEach(s => s.classList.remove('selected'));
+                if (chkUbahSemua.checked) resetColorAll();
+            } else {
+                activeTextColor = color;
+                document.querySelectorAll('.color-text-swatch').forEach(s => s.classList.remove('selected'));
+                swatch.classList.add('selected');
+                // Jika "Ubah semua" aktif, langsung apply
+                if (chkUbahSemua.checked) {
+                    applyColorToAll(activeTextColor);
+                }
+            }
+        });
+    });
+
+    // Checkbox "Ubah semua"
+    if (chkUbahSemua) {
+        chkUbahSemua.addEventListener('change', () => {
+            if (chkUbahSemua.checked && activeTextColor) {
+                applyColorToAll(activeTextColor);
+            } else if (!chkUbahSemua.checked) {
+                resetColorAll();
+            }
+        });
+
+        // Klik label juga trigger toggle — biar mudah di mobile
+        const ubahSemualabel = chkUbahSemua.closest('.color-picker-ubah-semua');
+        if (ubahSemualabel) {
+            ubahSemualabel.addEventListener('click', (e) => {
+                if (e.target === chkUbahSemua) return; // sudah trigger change
+            });
+        }
+    }
+
+    // Helper: ambil range kata di posisi klik
+    function getWordRangeAtPoint(x, y) {
+        let range = null;
+        if (document.caretRangeFromPoint) {
+            range = document.caretRangeFromPoint(x, y);
+        } else if (document.caretPositionFromPoint) {
+            const pos = document.caretPositionFromPoint(x, y);
+            if (!pos) return null;
+            range = document.createRange();
+            range.setStart(pos.offsetNode, pos.offset);
+            range.collapse(true);
+        }
+        if (!range) return null;
+
+        const node = range.startContainer;
+        if (node.nodeType !== Node.TEXT_NODE) return null;
+
+        const text = node.textContent;
+        let start = range.startOffset;
+        let end   = range.startOffset;
+
+        // Expand ke kiri (sampai spasi/awal)
+        while (start > 0 && /\S/.test(text[start - 1])) start--;
+        // Expand ke kanan (sampai spasi/akhir)
+        while (end < text.length && /\S/.test(text[end])) end++;
+
+        if (start >= end) return null;
+
+        const wordRange = document.createRange();
+        wordRange.setStart(node, start);
+        wordRange.setEnd(node, end);
+        return wordRange;
+    }
+
+    // Helper: unwrap element (hapus tag span, biarkan isinya)
+    function unwrapColorSpan(el) {
+        const parent = el.parentNode;
+        if (!parent) return;
+        const frag = document.createDocumentFragment();
+        while (el.firstChild) frag.appendChild(el.firstChild);
+        parent.replaceChild(frag, el);
+        parent.normalize();
+    }
+
+    // Klik pada contenteditable untuk mewarnai kata
+    contentInput.addEventListener('click', (e) => {
+        if (!colorModeActive || !activeTextColor) return;
+        if (chkUbahSemua.checked) return; // mode ubah semua, tidak perlu klik per kata
+
+        // Cek apakah klik pada span warna
+        let target = e.target;
+
+        // Naiki DOM sampai menemukan span dengan color, atau batas contentInput
+        while (target && target !== contentInput) {
+            if (target.tagName === 'SPAN' && target.style && target.style.color) {
+                const spanRgb  = target.style.color;
+                const activeRgb = hexToRgb(activeTextColor);
+                if (spanRgb === activeRgb) {
+                    // Warna sama — toggle off (hapus span)
+                    unwrapColorSpan(target);
+                } else {
+                    // Warna beda — ganti warna span
+                    target.style.color = activeTextColor;
+                }
+                localStorage.setItem('temp_c', contentInput.innerHTML);
+                return;
+            }
+            target = target.parentElement;
+        }
+
+        // Tidak klik di atas span — warnai kata di posisi klik
+        const wordRange = getWordRangeAtPoint(e.clientX, e.clientY);
+        if (!wordRange) return;
+        if (!contentInput.contains(wordRange.startContainer)) return;
+
+        // Pastikan tidak spans across element boundaries
+        try {
+            const span = document.createElement('span');
+            span.style.color = activeTextColor;
+            wordRange.surroundContents(span);
+            localStorage.setItem('temp_c', contentInput.innerHTML);
+        } catch (err) {
+            // Gagal karena range melintasi elemen berbeda — skip
+        }
+    });
+
     // ─────────────────────────────────────────
     const THEME_COLORS = [
         { key: 'black',  label: 'Hitam',  hex: '#0a0a0a', fabColor: '#0a0a0a', fabLabel: '#ffffff', fabIcon: '#ffffff' },
@@ -8080,6 +8890,10 @@
 
     // Handle back button for new pages
     window.addEventListener('popstate', function(e) {
+        if (mdHelpOverlay && mdHelpOverlay.classList.contains('open')) {
+            closeMdHelp();
+            return;
+        }
         if (babEditor.classList.contains('active')) {
             closeBabEditor();
             return;
@@ -8709,6 +9523,13 @@
             babWordCounter.textContent = words + ' kata';
         }
         babContentInput.addEventListener('input', updateBabWordCount);
+
+        // Markdown keydown listener for bab editor
+        babContentInput.addEventListener('keydown', function(e) {
+            if (e.key === ' ' || e.key === 'Enter') {
+                applyMarkdownToCurrentLine(babContentInput);
+            }
+        });
     })();
 
 
