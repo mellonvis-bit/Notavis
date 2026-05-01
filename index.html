@@ -3853,6 +3853,491 @@
         body.dark-mode .apk-install-btn { background: #f0f0f0; color: #0a0a0a; }
         body.dark-mode .apk-install-btn svg { stroke: #0a0a0a; }
         body.dark-mode .apk-open-btn { border-color: #2a2e32; }
+
+        /* ── FAB BACA DIRECT (tombol di kiri tombol koleksi) ── */
+        .fab-baca-direct {
+            position: fixed;
+            bottom: 36px;
+            right: calc(28px + 72px + 14px + 56px + 12px);
+            width: 56px;
+            height: 56px;
+            background: var(--paper);
+            color: var(--ink);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.14);
+            z-index: 120;
+            border: 1.5px solid var(--border);
+            user-select: none;
+            -webkit-user-select: none;
+            will-change: transform;
+            transition: transform 0.18s var(--ease), background 0.2s, border-color 0.2s;
+        }
+        .fab-baca-direct:active { transform: scale(0.88); }
+        .fab-baca-direct svg {
+            width: 22px; height: 22px;
+            stroke: var(--ink); fill: none;
+            stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+            transition: stroke 0.2s;
+        }
+        body.dark-mode .fab-baca-direct { background: #161a1d; border-color: #2a2e32; }
+        body.dark-mode .fab-baca-direct svg { stroke: #f0f0f0; }
+        @media (max-width: 600px) {
+            .fab-baca-direct { bottom: 22px; right: calc(20px + 72px + 14px + 56px + 12px); }
+        }
+
+        /* ── BACA PAGE (halaman baca TikTok-style) ── */
+        .baca-page {
+            position: fixed;
+            inset: 0;
+            background: #0a0a0a;
+            z-index: 290;
+            transform: translateY(100%);
+            transition: transform 0.38s cubic-bezier(0.77,0,0.175,1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .baca-page.active { transform: translateY(0); }
+
+        .baca-page-header {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            z-index: 10;
+            padding: 14px 20px;
+            padding-top: calc(14px + env(safe-area-inset-top, 0px));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, transparent 100%);
+            flex-shrink: 0;
+            pointer-events: none;
+        }
+        .baca-page-header > * { pointer-events: all; }
+
+        .baca-page-title {
+            font-family: 'Lora', serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+        }
+
+        .baca-close-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1.5px solid rgba(255,255,255,0.28);
+            border-radius: 20px;
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: opacity 0.15s;
+        }
+        .baca-close-btn:active { opacity: 0.7; }
+
+        .baca-scroll {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain;
+        }
+
+        .baca-buku-item {
+            height: 100vh;
+            width: 100%;
+            scroll-snap-align: start;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            overflow: hidden;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .baca-buku-item:active .baca-buku-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+        }
+
+        .baca-buku-bg {
+            position: absolute;
+            inset: 0;
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .baca-buku-bg-default {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7rem;
+        }
+
+        .baca-buku-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.3) 55%, transparent 100%);
+            z-index: 1;
+            transition: background 0.2s;
+        }
+
+        .baca-buku-info {
+            position: relative;
+            z-index: 2;
+            padding: 28px 24px 64px;
+            color: #fff;
+        }
+
+        .baca-buku-judul {
+            font-family: 'Lora', serif;
+            font-size: 1.65rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .baca-buku-deskripsi {
+            font-size: 0.92rem;
+            line-height: 1.6;
+            opacity: 0.85;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 18px;
+            text-shadow: 0 1px 5px rgba(0,0,0,0.45);
+        }
+
+        .baca-buku-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .baca-bab-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255,255,255,0.16);
+            border: 1px solid rgba(255,255,255,0.28);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+
+        .baca-btn-mulai {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #fff;
+            color: #0a0a0a;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.15s, transform 0.15s;
+            letter-spacing: 0.2px;
+        }
+        .baca-btn-mulai:active { opacity: 0.82; transform: scale(0.95); }
+        .baca-btn-mulai:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+        .baca-empty {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+            padding: 40px;
+            gap: 16px;
+        }
+        .baca-empty svg {
+            width: 64px; height: 64px;
+            stroke: rgba(255,255,255,0.3);
+            fill: none; stroke-width: 1.5;
+            stroke-linecap: round; stroke-linejoin: round;
+        }
+        .baca-empty p { font-size: 1rem; font-weight: 600; }
+        .baca-empty small { font-size: 0.85rem; opacity: 0.7; }
+
+        /* Scroll dots indikator */
+        .baca-dots {
+            position: fixed;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 295;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .baca-page.active .baca-dots { opacity: 1; }
+        .baca-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.32);
+            transition: background 0.2s, transform 0.2s;
+        }
+        .baca-dot.active {
+            background: #fff;
+            transform: scale(1.5);
+        }
+
+        /* ── READER PAGE (halaman membaca isi bab) ── */
+        .reader-page {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 295;
+            transform: translateX(100%);
+            transition: transform 0.38s cubic-bezier(0.77,0,0.175,1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .reader-page.active { transform: translateX(0); }
+
+        .reader-header {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+            background: var(--paper);
+            flex-shrink: 0;
+        }
+
+        .reader-back-btn {
+            background: none;
+            border: none;
+            color: var(--ink2);
+            font-size: 0.92rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 6px 4px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .reader-back-btn:active { opacity: 0.5; }
+
+        .reader-header-center {
+            flex: 1;
+            min-width: 0;
+            text-align: center;
+        }
+
+        .reader-buku-title {
+            font-family: 'Lora', serif;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--ink);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .reader-bab-progress {
+            font-size: 0.7rem;
+            color: var(--ink2);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .reader-chapters-wrap {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            touch-action: pan-y;
+        }
+
+        .reader-chapters-slider {
+            display: flex;
+            height: 100%;
+            will-change: transform;
+            transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        .reader-chapter-slide {
+            flex-shrink: 0;
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 32px 26px 32px;
+            box-sizing: border-box;
+        }
+
+        .reader-chapter-num {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--ink2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .reader-chapter-title {
+            font-family: 'Lora', serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 8px;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .reader-chapter-divider {
+            width: 36px;
+            height: 2px;
+            background: var(--accent);
+            margin: 0 auto 24px;
+            border-radius: 2px;
+        }
+
+        .reader-chapter-content {
+            font-family: 'Lora', serif;
+            font-size: 1.02rem;
+            line-height: 1.85;
+            color: var(--ink);
+            letter-spacing: 0.01em;
+        }
+
+        .reader-chapter-content img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin: 16px 0;
+            display: block;
+        }
+
+        .reader-chapter-empty {
+            text-align: center;
+            color: var(--ink2);
+            font-size: 0.9rem;
+            margin-top: 40px;
+            font-family: 'DM Sans', sans-serif;
+            font-style: italic;
+        }
+
+        .reader-nav-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            border-top: 1px solid var(--border);
+            background: var(--paper);
+            flex-shrink: 0;
+        }
+
+        .reader-nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--ink);
+            cursor: pointer;
+            transition: opacity 0.15s, background 0.15s;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .reader-nav-btn:disabled {
+            opacity: 0.28;
+            cursor: not-allowed;
+        }
+        .reader-nav-btn:not(:disabled):active { background: var(--border); }
+
+        .reader-nav-indicator {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--ink2);
+            text-align: center;
+            min-width: 48px;
+        }
+
+        .reader-no-chapter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 14px;
+            padding: 60px 40px;
+            text-align: center;
+            color: var(--ink2);
+        }
+        .reader-no-chapter svg {
+            width: 56px; height: 56px;
+            stroke: var(--border);
+            fill: none; stroke-width: 1.5;
+            stroke-linecap: round; stroke-linejoin: round;
+        }
+        .reader-no-chapter p { font-size: 0.9rem; }
+
+        /* Swipe hint animation saat pertama buka */
+        @keyframes swipeHint {
+            0%   { transform: translateX(0); opacity: 1; }
+            30%  { transform: translateX(-18px); opacity: 0.7; }
+            60%  { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+        .reader-swipe-hint {
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.55);
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 7px 16px;
+            border-radius: 20px;
+            pointer-events: none;
+            z-index: 5;
+            white-space: nowrap;
+            animation: swipeHint 1.6s ease 0.5s 2 forwards;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+
+        body.dark-mode .reader-page { background: #0d0f10; }
+        body.dark-mode .reader-header { background: #161a1d; }
+        body.dark-mode .reader-nav-bar { background: #161a1d; }
+        body.dark-mode .reader-chapter-content { color: #e8e8e8; }
+        body.dark-mode .reader-chapter-title { color: #f0f0f0; }
+        body.dark-mode .reader-chapter-num { color: #888; }
     </style>
 </head>
 <body>
@@ -4051,6 +4536,14 @@
         <svg viewBox="0 0 24 24">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+    </button>
+
+    <!-- FAB BACA DIRECT (tombol di kiri tombol koleksi) -->
+    <button class="fab-baca-direct" id="fabBacaDirect" aria-label="Baca Buku" title="Baca">
+        <svg viewBox="0 0 24 24">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
         </svg>
     </button>
 
@@ -4511,6 +5004,36 @@
                 <p>Belum ada buku di koleksi.</p>
                 <small>Buat buku baru lewat menu +</small>
             </div>
+        </div>
+    </div>
+
+    <!-- BACA PAGE (halaman baca TikTok-style) -->
+    <div class="baca-page" id="bacaPage">
+        <div class="baca-page-header">
+            <div class="baca-page-title">📖 Baca Buku</div>
+            <button class="baca-close-btn" id="bacaClose">✕ Tutup</button>
+        </div>
+        <div class="baca-scroll" id="bacaScroll"></div>
+        <div class="baca-dots" id="bacaDots"></div>
+    </div>
+
+    <!-- READER PAGE (halaman membaca isi bab) -->
+    <div class="reader-page" id="readerPage">
+        <div class="reader-header">
+            <button class="reader-back-btn" id="readerBack">&#8592; Kembali</button>
+            <div class="reader-header-center">
+                <div class="reader-buku-title" id="readerBukuTitle">Buku</div>
+                <div class="reader-bab-progress" id="readerBabProgress"></div>
+            </div>
+            <div style="width:72px"></div>
+        </div>
+        <div class="reader-chapters-wrap" id="readerChaptersWrap">
+            <div class="reader-chapters-slider" id="readerChaptersSlider"></div>
+        </div>
+        <div class="reader-nav-bar">
+            <button class="reader-nav-btn" id="readerPrevBtn">&#8592; Sebelumnya</button>
+            <span class="reader-nav-indicator" id="readerNavIndicator">—</span>
+            <button class="reader-nav-btn" id="readerNextBtn">Berikutnya &#8594;</button>
         </div>
     </div>
 
@@ -7177,14 +7700,400 @@
         openKoleksiPage();
     });
 
+    // ─────────────────────────────────────────
+    // NEW-D2. BACA BUKU (TikTok-style + Reader)
+    // ─────────────────────────────────────────
+    const bacaPage              = document.getElementById('bacaPage');
+    const bacaScroll            = document.getElementById('bacaScroll');
+    const bacaDotsEl            = document.getElementById('bacaDots');
+    const bacaClose             = document.getElementById('bacaClose');
+    const readerPage            = document.getElementById('readerPage');
+    const readerBack            = document.getElementById('readerBack');
+    const readerBukuTitle       = document.getElementById('readerBukuTitle');
+    const readerBabProgress     = document.getElementById('readerBabProgress');
+    const readerChaptersSlider  = document.getElementById('readerChaptersSlider');
+    const readerChaptersWrap    = document.getElementById('readerChaptersWrap');
+    const readerPrevBtn         = document.getElementById('readerPrevBtn');
+    const readerNextBtn         = document.getElementById('readerNextBtn');
+    const readerNavIndicator    = document.getElementById('readerNavIndicator');
+
+    let readerCurrentIdx  = 0;
+    let readerBabList     = [];
+    let readerBukuObj     = null;
+    let bacaScrollHandler = null;
+
+    // ── Baca Page ──
+    function openBacaPage() {
+        renderBacaScroll();
+        bacaPage.classList.add('active');
+        history.pushState({ bacaOpen: true }, '');
+    }
+
+    function closeBacaPage() {
+        bacaPage.classList.remove('active');
+        // Hapus scroll listener lama
+        if (bacaScrollHandler) {
+            bacaScroll.removeEventListener('scroll', bacaScrollHandler);
+            bacaScrollHandler = null;
+        }
+    }
+
+    function renderBacaScroll() {
+        bacaScroll.innerHTML = '';
+        bacaDotsEl.innerHTML = '';
+        // Hapus scroll listener lama sebelum buat baru
+        if (bacaScrollHandler) {
+            bacaScroll.removeEventListener('scroll', bacaScrollHandler);
+            bacaScrollHandler = null;
+        }
+
+        const list = getBukuList();
+        if (list.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'baca-empty';
+            empty.innerHTML = `
+                <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                <p>Belum ada buku untuk dibaca.</p>
+                <small>Buat buku baru lewat menu +</small>`;
+            bacaScroll.appendChild(empty);
+            return;
+        }
+
+        // Sorted: pinned first, then recent
+        const sorted = list.slice().reverse();
+        sorted.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+
+        const bgGradients = [
+            'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+            'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+            'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+            'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+            'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
+            'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
+            'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)',
+        ];
+
+        sorted.forEach(function(buku, idx) {
+            const item = document.createElement('div');
+            item.className = 'baca-buku-item';
+
+            // Background
+            if (buku.sampul) {
+                const bg = document.createElement('img');
+                bg.className = 'baca-buku-bg';
+                bg.src = buku.sampul;
+                bg.alt = '';
+                item.appendChild(bg);
+            } else {
+                const bgDef = document.createElement('div');
+                bgDef.className = 'baca-buku-bg-default';
+                bgDef.style.background = bgGradients[idx % bgGradients.length];
+                bgDef.textContent = '📖';
+                item.appendChild(bgDef);
+            }
+
+            // Overlay gradient
+            const overlay = document.createElement('div');
+            overlay.className = 'baca-buku-overlay';
+            item.appendChild(overlay);
+
+            // Info bawah
+            const info = document.createElement('div');
+            info.className = 'baca-buku-info';
+
+            const judulEl = document.createElement('div');
+            judulEl.className = 'baca-buku-judul';
+            judulEl.textContent = buku.judul;
+
+            const deskEl = document.createElement('div');
+            deskEl.className = 'baca-buku-deskripsi';
+            deskEl.textContent = buku.deskripsi || 'Tidak ada deskripsi.';
+
+            const metaEl = document.createElement('div');
+            metaEl.className = 'baca-buku-meta';
+
+            const babCount = getBabList(buku.id).length;
+
+            const badge = document.createElement('div');
+            badge.className = 'baca-bab-badge';
+            badge.textContent = babCount + ' Bab';
+
+            const mulaiBtn = document.createElement('button');
+            mulaiBtn.className = 'baca-btn-mulai';
+            if (babCount > 0) {
+                mulaiBtn.innerHTML = '▶ Baca';
+            } else {
+                mulaiBtn.textContent = 'Belum ada bab';
+                mulaiBtn.disabled = true;
+            }
+
+            metaEl.appendChild(badge);
+            metaEl.appendChild(mulaiBtn);
+
+            info.appendChild(judulEl);
+            info.appendChild(deskEl);
+            info.appendChild(metaEl);
+            item.appendChild(info);
+
+            function doOpenReader() {
+                if (babCount === 0) return;
+                resumeAudio(); playBtnSound('open');
+                setTimeout(function() { openReaderPage(buku); }, 80);
+            }
+
+            mulaiBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                doOpenReader();
+            });
+            item.addEventListener('click', function(e) {
+                if (e.target === mulaiBtn) return;
+                doOpenReader();
+            });
+
+            bacaScroll.appendChild(item);
+
+            // Dot indikator
+            const dot = document.createElement('div');
+            dot.className = 'baca-dot' + (idx === 0 ? ' active' : '');
+            bacaDotsEl.appendChild(dot);
+        });
+
+        // Hanya tampilkan dots jika lebih dari 1 buku
+        bacaDotsEl.style.display = sorted.length > 1 ? 'flex' : 'none';
+
+        // Sync dots saat scroll
+        bacaScrollHandler = function() {
+            const h = bacaScroll.clientHeight || window.innerHeight;
+            if (h === 0) return;
+            const currentIdx = Math.round(bacaScroll.scrollTop / h);
+            bacaDotsEl.querySelectorAll('.baca-dot').forEach(function(dot, i) {
+                dot.classList.toggle('active', i === currentIdx);
+            });
+        };
+        bacaScroll.addEventListener('scroll', bacaScrollHandler, { passive: true });
+    }
+
+    bacaClose.addEventListener('click', function() {
+        resumeAudio(); playBtnSound('tap');
+        closeBacaPage();
+        if (window.history.state && window.history.state.bacaOpen) {
+            history.back();
+        }
+    });
+
+    document.getElementById('fabBacaDirect').addEventListener('click', function() {
+        resumeAudio(); playBtnSound('open');
+        openBacaPage();
+    });
+
+    // ── Reader Page ──
+    function openReaderPage(buku) {
+        readerBukuObj     = buku;
+        readerBabList     = getBabList(buku.id);
+        readerCurrentIdx  = 0;
+        readerBukuTitle.textContent = buku.judul;
+        buildReaderSlides();
+        updateReaderNav();
+        readerPage.classList.add('active');
+        history.pushState({ readerOpen: true }, '');
+    }
+
+    function closeReaderPage() {
+        readerPage.classList.remove('active');
+        readerBukuObj    = null;
+        readerBabList    = [];
+        readerCurrentIdx = 0;
+        // Bersihkan slide setelah animasi tutup selesai
+        setTimeout(function() {
+            if (!readerPage.classList.contains('active')) {
+                readerChaptersSlider.innerHTML = '';
+                readerChaptersSlider.style.transform = '';
+            }
+        }, 400);
+    }
+
+    function buildReaderSlides() {
+        readerChaptersSlider.innerHTML = '';
+
+        if (readerBabList.length === 0) {
+            readerChaptersSlider.style.width = '100%';
+            readerChaptersSlider.style.transform = 'translateX(0)';
+            const slide = document.createElement('div');
+            slide.className = 'reader-chapter-slide';
+            slide.style.width = '100%';
+            slide.innerHTML = `<div class="reader-no-chapter">
+                <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                <p>Buku ini belum memiliki bab.</p></div>`;
+            readerChaptersSlider.appendChild(slide);
+            return;
+        }
+
+        const total = readerBabList.length;
+        readerChaptersSlider.style.width = (total * 100) + '%';
+        readerChaptersSlider.style.transform = 'translateX(0)';
+
+        readerBabList.forEach(function(bab, idx) {
+            const slide = document.createElement('div');
+            slide.className = 'reader-chapter-slide';
+            slide.style.width = (100 / total) + '%';
+
+            const numEl = document.createElement('div');
+            numEl.className = 'reader-chapter-num';
+            numEl.textContent = 'Bab ' + (idx + 1);
+
+            const titleEl = document.createElement('div');
+            titleEl.className = 'reader-chapter-title';
+            titleEl.textContent = bab.judul || 'Tanpa Judul';
+
+            const divider = document.createElement('div');
+            divider.className = 'reader-chapter-divider';
+
+            const contentEl = document.createElement('div');
+            contentEl.className = 'reader-chapter-content';
+            if (bab.content && bab.content.trim()) {
+                contentEl.innerHTML = bab.content;
+                // Pastikan gambar tidak bisa di-drag (mengganggu swipe)
+                contentEl.querySelectorAll('img').forEach(function(img) {
+                    img.draggable = false;
+                });
+            } else {
+                contentEl.innerHTML = '<div class="reader-chapter-empty">Bab ini belum memiliki isi.</div>';
+            }
+
+            slide.appendChild(numEl);
+            slide.appendChild(titleEl);
+            slide.appendChild(divider);
+            slide.appendChild(contentEl);
+            readerChaptersSlider.appendChild(slide);
+        });
+
+        // Tampilkan hint swipe jika lebih dari 1 bab
+        if (total > 1) {
+            const hint = document.createElement('div');
+            hint.className = 'reader-swipe-hint';
+            hint.textContent = '← Geser untuk ganti bab →';
+            document.getElementById('readerChaptersWrap').appendChild(hint);
+            setTimeout(function() {
+                if (hint.parentNode) hint.parentNode.removeChild(hint);
+            }, 4000);
+        }
+    }
+
+    // Pasang gesture swipe sekali saja (persisten, dijaga oleh flag active)
+    setupReaderSwipe();
+
+    function setupReaderSwipe() {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isHorizGesture = null;
+        let swiping = false;
+
+        const wrapEl = document.getElementById('readerChaptersWrap');
+
+        wrapEl.addEventListener('touchstart', function(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            isHorizGesture = null;
+            swiping = false;
+        }, { passive: true });
+
+        wrapEl.addEventListener('touchmove', function(e) {
+            if (!readerPage.classList.contains('active')) return;
+            if (isHorizGesture === null) {
+                const dx = Math.abs(e.touches[0].clientX - touchStartX);
+                const dy = Math.abs(e.touches[0].clientY - touchStartY);
+                if (dx > 8 || dy > 8) {
+                    isHorizGesture = dx > dy;
+                }
+            }
+            if (isHorizGesture) {
+                e.preventDefault();
+                swiping = true;
+            }
+        }, { passive: false });
+
+        wrapEl.addEventListener('touchend', function(e) {
+            if (!readerPage.classList.contains('active')) return;
+            if (!isHorizGesture || !swiping) return;
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            if (dx < -52 && readerCurrentIdx < readerBabList.length - 1) {
+                readerCurrentIdx++;
+                gotoReaderSlide(readerCurrentIdx);
+                resumeAudio(); playBtnSound('tap');
+            } else if (dx > 52 && readerCurrentIdx > 0) {
+                readerCurrentIdx--;
+                gotoReaderSlide(readerCurrentIdx);
+                resumeAudio(); playBtnSound('tap');
+            }
+            swiping = false;
+        }, { passive: true });
+    }
+
+    function gotoReaderSlide(idx) {
+        readerCurrentIdx = Math.max(0, Math.min(idx, readerBabList.length - 1));
+        const total = readerBabList.length || 1;
+        const pct = -(readerCurrentIdx * (100 / total));
+        readerChaptersSlider.style.transform = 'translateX(' + pct + '%)';
+        // Scroll slide ke atas
+        const slides = readerChaptersSlider.querySelectorAll('.reader-chapter-slide');
+        if (slides[readerCurrentIdx]) slides[readerCurrentIdx].scrollTop = 0;
+        updateReaderNav();
+    }
+
+    function updateReaderNav() {
+        const total = readerBabList.length;
+        if (total > 0) {
+            readerBabProgress.textContent = 'Bab ' + (readerCurrentIdx + 1) + ' dari ' + total;
+            readerNavIndicator.textContent = (readerCurrentIdx + 1) + ' / ' + total;
+        } else {
+            readerBabProgress.textContent = '';
+            readerNavIndicator.textContent = '—';
+        }
+        readerPrevBtn.disabled = readerCurrentIdx === 0;
+        readerNextBtn.disabled = readerCurrentIdx >= total - 1;
+    }
+
+    readerPrevBtn.addEventListener('click', function() {
+        if (readerCurrentIdx > 0) {
+            readerCurrentIdx--;
+            gotoReaderSlide(readerCurrentIdx);
+            resumeAudio(); playBtnSound('tap');
+        }
+    });
+
+    readerNextBtn.addEventListener('click', function() {
+        if (readerCurrentIdx < readerBabList.length - 1) {
+            readerCurrentIdx++;
+            gotoReaderSlide(readerCurrentIdx);
+            resumeAudio(); playBtnSound('tap');
+        }
+    });
+
+    readerBack.addEventListener('click', function() {
+        resumeAudio(); playBtnSound('tap');
+        closeReaderPage();
+        if (window.history.state && window.history.state.readerOpen) {
+            history.back();
+        }
+    });
+
     // Handle back button for new pages
     window.addEventListener('popstate', function(e) {
         if (babEditor.classList.contains('active')) {
             closeBabEditor();
             return;
         }
+        if (readerPage && readerPage.classList.contains('active')) {
+            closeReaderPage();
+            return;
+        }
         if (bukuPage.classList.contains('active')) {
             closeBukuPage();
+            return;
+        }
+        if (bacaPage && bacaPage.classList.contains('active')) {
+            closeBacaPage();
             return;
         }
         if (koleksiPage.classList.contains('active')) {
@@ -8504,4 +9413,4 @@ self.addEventListener('fetch', e => {
 
     </script>
 </body>
-    </html>
+</html>
