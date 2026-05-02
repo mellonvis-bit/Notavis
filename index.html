@@ -2743,6 +2743,23 @@
             flex-shrink: 0;
         }
 
+        .bab-editor-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bab-wc-header {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--ink2);
+            padding: 3px 9px;
+            background: var(--bg);
+            border-radius: 20px;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
         .bab-editor-back-btn {
             background: none;
             border: none;
@@ -2848,6 +2865,7 @@
         body.dark-mode .bab-editor-header { background: #161a1d; }
         body.dark-mode .bab-judul-input { color: #f0f0f0; border-color: #2a2e32; }
         body.dark-mode .bab-content-input { color: #e8e8e8; }
+        body.dark-mode .bab-wc-header { background: #111416; color: #a0a0a0; }
 
         /* ── BAB EDITOR TOOLBAR ── */
         .bab-editor-toolbar {
@@ -5366,7 +5384,10 @@
     <!-- BAB EDITOR (editor bab buku) -->
     <div class="bab-editor" id="babEditor">
         <div class="bab-editor-header">
-            <button class="bab-editor-back-btn" id="babEditorBack">Batal</button>
+            <div class="bab-editor-left">
+                <button class="bab-editor-back-btn" id="babEditorBack">Batal</button>
+                <span class="word-counter bab-wc-header" id="babWordCounter">0 kata</span>
+            </div>
             <span class="bab-editor-label">Menulis Bab</span>
             <button class="bab-editor-save-btn" id="babEditorSave">Simpan</button>
         </div>
@@ -5374,7 +5395,6 @@
             <input type="text" id="babJudulInput" class="bab-judul-input" placeholder="Judul Bab (maks. 7 kata)..." maxlength="80" autocomplete="off">
             <div class="word-limit-hint" id="babJudulHint" style="padding: 0 8px 4px;">0 / 7 kata</div>
             <div id="babContentInput" class="bab-content-input" contenteditable="true" data-placeholder="Tulis ceritamu di sini..."></div>
-            <div class="word-counter" id="babWordCounter">0 kata</div>
         </div>
         <!-- Bab font size panel -->
         <div class="bab-font-panel" id="babFontSizePanel">
@@ -5798,6 +5818,12 @@
         loadBukuBabCache(() => {
             displayNotes();
             checkWelcomePopup();
+            // Auto-tampilkan Baca Buku jika user sudah punya lebih dari 1 buku
+            if (allBukuCache.length > 1) {
+                setTimeout(() => {
+                    if (typeof openBacaPage === 'function') openBacaPage();
+                }, 600);
+            }
         });
     };
 
